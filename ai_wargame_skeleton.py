@@ -9,6 +9,8 @@ from typing import Tuple, TypeVar, Type, Iterable, ClassVar
 import random
 import requests
 
+import os.path
+
 # maximum and minimum values for our heuristic scores (usually represents an end of game condition)
 MAX_HEURISTIC_SCORE = 2000000000
 MIN_HEURISTIC_SCORE = -2000000000
@@ -40,6 +42,7 @@ class GameType(Enum):
     CompVsComp = 3
 
 ##############################################################################################################
+# GAME RULES
 
 @dataclass(slots=True)
 class Unit:
@@ -100,6 +103,7 @@ class Unit:
         return amount
 
 ##############################################################################################################
+# BOARD COORDINATES
 
 @dataclass(slots=True)
 class Coord:
@@ -161,6 +165,7 @@ class Coord:
             return None
 
 ##############################################################################################################
+# GAME MOVES
 
 @dataclass(slots=True)
 class CoordPair:
@@ -213,6 +218,7 @@ class CoordPair:
             return None
 
 ##############################################################################################################
+# GAME STATE
 
 @dataclass(slots=True)
 class Options:
@@ -228,6 +234,7 @@ class Options:
     broker : str | None = None
 
 ##############################################################################################################
+# GAME STATISTICS
 
 @dataclass(slots=True)
 class Stats:
@@ -236,6 +243,7 @@ class Stats:
     total_seconds: float = 0.0
 
 ##############################################################################################################
+# GAME MOVES
 
 @dataclass(slots=True)
 class Game:
@@ -247,6 +255,7 @@ class Game:
     stats: Stats = field(default_factory=Stats)
     _attacker_has_ai : bool = True
     _defender_has_ai : bool = True
+    gameTrace_path: str = ''
 
     def __post_init__(self):
         """Automatically called after class init to set up the default board state."""
@@ -324,6 +333,7 @@ class Game:
         if self.is_valid_move(coords):
             self.set(coords.dst,self.get(coords.src))
             self.set(coords.src,None)
+            self.trace_each_action(coords.src, coords.dst)
             return (True,"")
         return (False,"invalid move")
 
@@ -332,31 +342,37 @@ class Game:
         self.next_player = self.next_player.next()
         self.turns_played += 1
 
-    def to_string(self) -> str:
+    def draw_board(self) -> str:
         """Pretty text representation of the game."""
         dim = self.options.dim
-        output = ""
-        output += f"Next player: {self.next_player.name}\n"
-        output += f"Turns played: {self.turns_played}\n"
         coord = Coord()
-        output += "\n   "
+        board = "   "
         for col in range(dim):
             coord.col = col
             label = coord.col_string()
-            output += f"{label:^3} "
-        output += "\n"
+            board += f"{label:^3} "
+        board += "\n"
         for row in range(dim):
             coord.row = row
             label = coord.row_string()
-            output += f"{label}: "
+            board += f"{label}: "
             for col in range(dim):
                 coord.col = col
                 unit = self.get(coord)
                 if unit is None:
-                    output += " .  "
+                    board += " .  "
                 else:
-                    output += f"{str(unit):^3} "
-            output += "\n"
+                    board += f"{str(unit):^3} "
+            board += "\n"
+        return board
+
+    def to_string(self) -> str:
+        """Pretty text representation of the game."""
+        output = ""
+        output += f"Next player: {self.next_player.name}\n"
+        output += f"Turns played: {self.turns_played}/{self.options.max_turns}\n"
+        output += "\n"
+        output += self.draw_board()
         return output
 
     def __str__(self) -> str:
@@ -527,8 +543,23 @@ class Game:
         except Exception as error:
             print(f"Broker error: {error}")
         return None
+    
+    def trace_each_action(self, src, dest): 
+        with open(self.gameTrace_path, 'a') as f:
+            f.write("____________________________________________ \n \n")
+            f.write("Turn number: {}/{} \n".format(self.turns_played + 1, self.options.max_turns) +
+                    "Player: {} \n".format(self.next_player.name) +
+                    "Action: {} to {} \n".format(src, dest) + 
+                    "AI time for action: {}\n".format("TODO") +
+                    "AI heuristic score: {}\n \n".format("TODO") +
+                    "New configuration of the board: \n" +
+                    self.draw_board() + "\n"
+            )
+
+        
 
 ##############################################################################################################
+# MAIN PROGRAM
 
 def main():
     # parse command line arguments
@@ -563,7 +594,44 @@ def main():
         options.broker = args.broker
 
     # create a new game
-    game = Game(options=options)
+    game = Game(
+        options=options, 
+        gameTrace_path='./gameTrace/gameTrace-{}-{}-{}.txt'.format(options.alpha_beta, options.max_time, options.max_turns)
+    )
+
+    # game trace path
+    try:
+        #path = './gameTrace/gameTrace-{}-{}-{}.txt'.format(options.alpha_beta, options.max_time, options.max_turns)
+        # If file does not exist, then create it
+        if not os.path.exists(game.gameTrace_path):
+            with open(game.gameTrace_path, 'w') as file:
+                now = datetime.now()
+                file.write('GAME TRACE \n \n')
+                file.close()
+
+        # If file exists, then clear its contents
+        else:
+            with open(game.gameTrace_path, 'w') as file:
+                file.seek(0)
+                file.truncate()
+                file.write('GAME TRACE \n \n')
+                file.close()
+        
+        with open(game.gameTrace_path, 'a') as file:
+            file.write(
+                    'Game parameters: \n' +
+                    '\tTimeout time (s): {}\n'.format(options.max_time) +
+                    '\tMax number of turns: {}\n'.format(options.max_turns) +
+                    '\tAlpha-beta (T/F): {}\n'.format(options.alpha_beta) +
+                    '\tPlay modes: {}\n'.format(options.game_type.name) +
+                    '\tHeuristic: {}'.format('TODO__heuristic') +
+                    '\n \n' + 
+                    'INITIAL CONFIGURATION OF THE BOARD \n' +
+                    game.to_string() + '\n'
+                )
+    
+    except FileNotFoundError:
+        print("The 'gameTrace' directory does not exist")
 
     # the main game loop
     while True:
@@ -571,6 +639,12 @@ def main():
         print(game)
         winner = game.has_winner()
         if winner is not None:
+            with open(game.gameTrace_path, 'a') as file:
+                file.write(
+                    '\n \n GAME OVER \n' +
+                    "{} wins in {}".format(winner.name, game.turns_played)
+                    )
+
             print(f"{winner.name} wins!")
             break
         if game.options.game_type == GameType.AttackerVsDefender:
