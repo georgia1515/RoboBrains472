@@ -350,15 +350,22 @@ class Game:
             return False
 
         # validate when unit engaged in combat with adversial unit -> both unit can't move
-        unitAdversarialUp = self.get(Coord(coords.src.row-1, coords.src.col))
-        unitAdversarialDown = self.get(Coord(coords.src.row+1, coords.src.col))
-        unitAdversarialLeft = self.get(Coord(coords.src.row, coords.src.col-1))
+        unitAdversarialUp = self.get(
+            Coord(coords.src.row-1, coords.src.col))
+        unitAdversarialDown = self.get(
+            Coord(coords.src.row+1, coords.src.col))
+        unitAdversarialLeft = self.get(
+            Coord(coords.src.row, coords.src.col-1))
         unitAdversarialRight = self.get(
             Coord(coords.src.row, coords.src.col+1))
 
         # adversial unit above, below, left, or right of my unit
-        if (unitAdversarialUp is not None and unitAdversarialUp.player != unit.player) or (unitAdversarialDown is not None and unitAdversarialDown.player != unit.player) or (unitAdversarialLeft is not None and unitAdversarialLeft.player != unit.player) or (unitAdversarialRight is not None and unitAdversarialRight.player != unit.player):
-            return False
+        # except for type: Virus and Tech -> can move even engaged
+        if unit.type == UnitType.AI or unit.type == UnitType.Firewall or unit.type == UnitType.Program:
+            print(
+                "not type: virus or tech - even in combat: can move. should not seee this with tech/virus")
+            if (unitAdversarialUp is not None and unitAdversarialUp.player != unit.player) or (unitAdversarialDown is not None and unitAdversarialDown.player != unit.player) or (unitAdversarialLeft is not None and unitAdversarialLeft.player != unit.player) or (unitAdversarialRight is not None and unitAdversarialRight.player != unit.player):
+                return False
 
         # if unitAdversarialDown is not None and unitAdversarialDown.player != unit.player:
         #     return False
@@ -404,9 +411,72 @@ class Game:
         if self.is_valid_move(coords):
             self.set(coords.dst, self.get(coords.src))
             self.set(coords.src, None)
-            self.trace_each_action(coords.src, coords.dst)
             return (True, "")
+
+        unit = self.get(coords.src)
+        unitDst = self.get(coords.dst)
+
+        # repeat code: player can't play the unit of another move. Duplicate code: to change!
+        if unit is None or unit.player != self.next_player:
+            print("first coord,empty 22")
+            return (False, "invalid move")
+
+        # self-destruct
+        if coords.src == coords.dst:
+            self.mod_health(coords.src, -9)
+            self.mod_health(Coord(coords.src.row-1, coords.src.col), -2)
+            self.mod_health(Coord(coords.src.row-1, coords.src.col+1), -2)
+            self.mod_health(Coord(coords.src.row, coords.src.col+1), -2)
+            self.mod_health(Coord(coords.src.row+1, coords.src.col+1), -2)
+            self.mod_health(Coord(coords.src.row+1, coords.src.col), -2)
+            self.mod_health(Coord(coords.src.row+1, coords.src.col-1), -2)
+            self.mod_health(Coord(coords.src.row, coords.src.col-1), -2)
+            self.mod_health(Coord(coords.src.row-1, coords.src.col-1), -2)
+            return (True, "")
+
+        unitAdversarialUp = self.get(
+            Coord(coords.src.row-1, coords.src.col))
+        if self.has_attack_or_repair(unitAdversarialUp, unit, unitDst, coords):
+            return (True, "")
+
+        # attack/repair when another unit is below my unit
+        unitAdversarialDown = self.get(
+            Coord(coords.src.row+1, coords.src.col))
+        if self.has_attack_or_repair(unitAdversarialDown, unit, unitDst, coords):
+            return (True, "")
+
+        # attack/repair when another unit is on left of my unit
+        unitAdversarialLeft = self.get(
+            Coord(coords.src.row, coords.src.col-1))
+        if self.has_attack_or_repair(unitAdversarialLeft, unit, unitDst, coords):
+            return (True, "")
+
+        # attack/repair when another unit is on right of my unit
+        unitAdversarialRight = self.get(
+            Coord(coords.src.row, coords.src.col+1))
+        if self.has_attack_or_repair(unitAdversarialRight, unit, unitDst, coords):
+            return (True, "")
+
         return (False, "invalid move")
+
+    def has_attack_or_repair(self, adjacentUnit, srcUnit, destUnit: Unit, coords: CoordPair) -> bool:
+        if adjacentUnit is not None:
+            # not same team & dst move is where opponent located at -> attack
+            if adjacentUnit.player != srcUnit.player and destUnit == adjacentUnit:
+                self.mod_health(
+                    coords.src, -(abs(destUnit.damage_amount(srcUnit))))
+                self.mod_health(coords.dst, -
+                                (abs(srcUnit.damage_amount(destUnit))))
+                return True
+            # same team & dst move is where friendly unit located at -> repair
+            elif adjacentUnit.player == srcUnit.player and destUnit == adjacentUnit and ((srcUnit.type == UnitType.AI and (adjacentUnit.type == UnitType.Virus or adjacentUnit.type == UnitType.Tech)) or (srcUnit.type == UnitType.Tech and (adjacentUnit.type == UnitType.AI or adjacentUnit.type == UnitType.Firewall or adjacentUnit.type == UnitType.Program))):
+                if 0 < srcUnit.repair_amount(destUnit) and srcUnit.repair_amount(destUnit) < 9:
+                    self.mod_health(
+                        coords.dst, +(abs(srcUnit.repair_amount(destUnit))))
+                    return True
+                else:
+                    return False
+        return False
 
     def next_turn(self):
         """Transitions game to the next turn."""
