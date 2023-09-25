@@ -329,263 +329,172 @@ class Game:
     def is_valid_move(self, coords: CoordPair) -> bool:
         """Validate a move expressed as a CoordPair. TODO: WRITE MISSING CODE!!!"""
         if not self.is_valid_coord(coords.src) or not self.is_valid_coord(coords.dst):  # validate if coord inside board game
-            print("outside board game")
             return False
         unit = self.get(coords.src)
         if unit is None or unit.player != self.next_player:
-            print("first coord,empty")
             return False
 
-        # validate unit can't move diagonally
-        unitAdversarialUpR = self.get(
-            Coord(coords.src.row-1, coords.src.col-1))
-        unitAdversarialUpL = self.get(
-            Coord(coords.src.row-1, coords.src.col+1))
-        unitAdversarialDownR = self.get(
-            Coord(coords.src.row+1, coords.src.col+1))
-        unitAdversarialDownL = self.get(
-            Coord(coords.src.row+1, coords.src.col-1))
         unitDst = self.get(coords.dst)
 
-        print(f"{coords.dst}")
-        print(f"{Coord(coords.src.row-1, coords.src.col-1)}, {Coord(coords.src.row-1, coords.src.col+1)}, {Coord(coords.src.row+1, coords.src.col+1)}, {Coord(coords.src.row+1, coords.src.col-1)}")
-
+        # validate when unit can't move diagonally
         if coords.dst == Coord(coords.src.row-1, coords.src.col-1) or coords.dst == Coord(coords.src.row-1, coords.src.col+1) or coords.dst == Coord(coords.src.row+1, coords.src.col+1) or coords.dst == Coord(coords.src.row+1, coords.src.col-1):
-            print("diagonal - cnt move")
             return False
 
         # validate when unit engaged in combat with adversial unit -> both unit can't move
+        # adversial unit above my unit
         unitAdversarialUp = self.get(Coord(coords.src.row-1, coords.src.col))
         if unitAdversarialUp is not None and unitAdversarialUp.player != unit.player:
-            print("someone is above and enemy - cnt move")
-            # if unitDst != unitAdversarialUp: # i want to attack
             return False
 
+        # adversial unit below my unit
         unitAdversarialDown = self.get(Coord(coords.src.row+1, coords.src.col))
         if unitAdversarialDown is not None and unitAdversarialDown.player != unit.player:
-            print("someone is below and enemy - cant move")
-            # if unitDst != unitAdversarialDown:
             return False
 
+        # adversial unit on left of my unit
         unitAdversarialLeft = self.get(Coord(coords.src.row, coords.src.col-1))
         if unitAdversarialLeft is not None and unitAdversarialLeft.player != unit.player:
-            print("someone if on my left and enemy - cant move")
-            # if unitDst != unitAdversarialLeft:
             return False
 
+        # adversial unit on right of my unit
         unitAdversarialRight = self.get(
             Coord(coords.src.row, coords.src.col+1))
         if unitAdversarialRight is not None and unitAdversarialRight.player != unit.player:
-            print("someone if on my right and enemy - cant move")
-            # if unitDst != unitAdversarialRight:
             return False
 
         # track unit movement
         deplacementMoveCol = coords.dst.col - coords.src.col
         deplacementMoveRow = coords.dst.row - coords.src.row
-        # print(deplacementMoveCol)
-        # print(deplacementMoveRow)
 
-        # cant move more than 1 place
+        # validate when unit can't move more than 1 place
         if abs(deplacementMoveCol) > 1 or abs(deplacementMoveRow) > 1:
-            print("cant move more than 1 mvt")
             return False
 
         # validate attacker move: only 1 left or 1 up
         if unit.player == Player.Attacker and (unit.type == UnitType.AI or unit.type == UnitType.Firewall or unit.type == UnitType.Program):
             if ((deplacementMoveCol == -1 and deplacementMoveRow == 0) or (deplacementMoveCol == 0 and deplacementMoveRow == -1)) and unitDst is None:
-                print("going up or left")
                 return True
             else:
-                print(
-                    f"invalid move: up/left -> {deplacementMoveCol, deplacementMoveRow}")
                 return False
 
         # validate defender move: only 1 right or 1 down
         if unit.player == Player.Defender and (unit.type == UnitType.AI or unit.type == UnitType.Firewall or unit.type == UnitType.Program):
             if ((deplacementMoveCol == 1 and deplacementMoveRow == 0) or (deplacementMoveCol == 0 and deplacementMoveRow == 1)) and unitDst is None:
-                print(f"{unitDst}")
-                print("going down r right")
                 return True
             else:
-                print("invalid move: down or right")
                 return False
 
-        # # validate max 1 deplacement move or invalid diagonal move
-        # if abs(deplacementMoveCol) > 1 or abs(deplacementMoveRow) > 1 or (deplacementMoveCol == -1 and deplacementMoveRow == -1) or (deplacementMoveCol == 1 and deplacementMoveRow == 1):
-        #     return False
-
-        # # validate attacker of ai/firewall/program
-        # if unit.player == Player.Attacker and (unit.type == UnitType.AI or unit.type == UnitType.Firewall or unit.type == UnitType.Program):
-        #     if not (deplacementMoveRow == 0 or deplacementMoveRow == -1):  # invalid move: not up
-        #         return False
-        #     if not (deplacementMoveCol == 0 or deplacementMoveCol == -1):  # invalid move: not left
-        #         return False
-
-        # # validate Defender of ai/firewall/program
-        # if unit.player == Player.Defender and (unit.type == UnitType.AI or unit.type == UnitType.Firewall or unit.type == UnitType.Program):
-        #     if not (deplacementMoveRow == 0 or deplacementMoveRow == 1):  # invalid move: not down
-        #         return False
-        #     if not (deplacementMoveCol == 0 or deplacementMoveCol == 1):  # invalid move: not right
-        #         return False
-
         unit = self.get(coords.dst)
-        print(f"cant move, but may attack or repiar? {unit}")
-        return (unit is None)  # cant move, but can attack or repair?
+        return (unit is None)
 
     def perform_move(self, coords: CoordPair) -> Tuple[bool, str]:
         """Validate and perform a move expressed as a CoordPair. TODO: WRITE MISSING CODE!!!"""
 
+        # validate if my unit can move: if can't, could attack/repair/self-destruct or is invalid move
         if self.is_valid_move(coords):
             self.set(coords.dst, self.get(coords.src))
             self.set(coords.src, None)
             return (True, "")
 
-        # validate when unit S next to another unit T from the same team -> S repairs T
         unit = self.get(coords.src)
         unitDst = self.get(coords.dst)
 
+        # repeat code: player can't play the unit of another move. Duplicate code: to change!
         if unit is None or unit.player != self.next_player:
             print("first coord,empty 22")
             return (False, "invalid move")
 
         # self-destruct
-        if unit == unitDst:
+        if coords.src == coords.dst:
             self.mod_health(coords.src, -9)
-            self.mod_health(
-                Coord(coords.src.row-1, coords.src.col), -2)
-            self.mod_health(
-                Coord(coords.src.row-1, coords.src.col+1), -2)
-            self.mod_health(
-                Coord(coords.src.row, coords.src.col+1), -2)
-            self.mod_health(
-                Coord(coords.src.row+1, coords.src.col+1), -2)
-            self.mod_health(
-                Coord(coords.src.row+1, coords.src.col), -2)
-            self.mod_health(
-                Coord(coords.src.row+1, coords.src.col-1), -2)
-            self.mod_health(
-                Coord(coords.src.row, coords.src.col-1), -2)
-            self.mod_health(
-                Coord(coords.src.row-1, coords.src.col-1), -2)
-            print("self destructed ")
+            self.mod_health(Coord(coords.src.row-1, coords.src.col), -2)
+            self.mod_health(Coord(coords.src.row-1, coords.src.col+1), -2)
+            self.mod_health(Coord(coords.src.row, coords.src.col+1), -2)
+            self.mod_health(Coord(coords.src.row+1, coords.src.col+1), -2)
+            self.mod_health(Coord(coords.src.row+1, coords.src.col), -2)
+            self.mod_health(Coord(coords.src.row+1, coords.src.col-1), -2)
+            self.mod_health(Coord(coords.src.row, coords.src.col-1), -2)
+            self.mod_health(Coord(coords.src.row-1, coords.src.col-1), -2)
             return (True, "")
 
-        # attack/repair when other unit is above unit
         unitAdversarialUp = self.get(
             Coord(coords.src.row-1, coords.src.col))
         if unitAdversarialUp is not None:
-            print("someone below me1")
-            # not same team & dst is where opponent located-> attack
+            # not same team & dst move is where opponent located at -> attack
             if unitAdversarialUp.player != unit.player and unitDst == unitAdversarialUp:
-                print("is enemy 1")
                 self.mod_health(
                     coords.src, -(abs(unitDst.damage_amount(unit))))
                 self.mod_health(coords.dst, -
                                 (abs(unit.damage_amount(unitDst))))
-                print("attacked")
-                print(unitDst.damage_amount(unit))
-                print(abs(unit.damage_amount(unitDst)))
                 return (True, "")
-            # same team & dst is where hellper located -> repair
+            # same team & dst move is where friendly unit located at -> repair
             elif unitAdversarialUp.player == unit.player and unitDst == unitAdversarialUp and ((unit.type == UnitType.AI and (unitAdversarialUp.type == UnitType.Virus or unitAdversarialUp.type == UnitType.Tech)) or (unit.type == UnitType.Tech and (unitAdversarialUp.type == UnitType.AI or unitAdversarialUp.type == UnitType.Firewall or unitAdversarialUp.type == UnitType.Program))):
-                print("is friends 1")
-                print(unit.repair_amount(unitDst))
                 if 0 < unit.repair_amount(unitDst) and unit.repair_amount(unitDst) < 9:
                     self.mod_health(
                         coords.dst, +(abs(unit.repair_amount(unitDst))))
-                    print("repaired ")
                     return (True, "")
                 else:
-                    print("cant repair - max health")
-                    return (False, "cant repair - max health")
+                    return (False, "can't repair - max health")
 
-        # attack when opponent is below unit
+        # attack/repair when another unit is below my unit
         unitAdversarialDown = self.get(
             Coord(coords.src.row+1, coords.src.col))
         if unitAdversarialDown is not None:
-            print("someone below me1")
-            # not same team & dst is where opponent located-> attack
+            # not same team & dst move is where opponent located at -> attack
             if unitAdversarialDown.player != unit.player and unitDst == unitAdversarialDown:
-                print("is enemy 1")
                 self.mod_health(
                     coords.src, -(abs(unitDst.damage_amount(unit))))
                 self.mod_health(coords.dst, -
                                 (abs(unit.damage_amount(unitDst))))
-                print("attacked")
-                print(unitDst.damage_amount(unit))
-                print(abs(unit.damage_amount(unitDst)))
                 return (True, "")
-            # same team & dst is where hellper located -> repair
+            # same team & dst move is where friendly unit located at -> repair
             elif unitAdversarialDown.player == unit.player and unitDst == unitAdversarialDown and ((unit.type == UnitType.AI and (unitAdversarialDown.type == UnitType.Virus or unitAdversarialDown.type == UnitType.Tech)) or (unit.type == UnitType.Tech and (unitAdversarialDown.type == UnitType.AI or unitAdversarialDown.type == UnitType.Firewall or unitAdversarialDown.type == UnitType.Program))):
-                print("is friends 1")
-                print(unit.repair_amount(unitDst))
                 if 0 < unit.repair_amount(unitDst) and unit.repair_amount(unitDst) < 9:
                     self.mod_health(
                         coords.dst, +(abs(unit.repair_amount(unitDst))))
-                    print("repaired ")
                     return (True, "")
                 else:
-                    print("cant repair - max health")
-                    return (False, "cant repair - max health")
+                    return (False, "can't repair - max health")
 
-        # attack when opponent is on the left of unit
+        # attack/repair when another unit is on left of my unit
         unitAdversarialLeft = self.get(
             Coord(coords.src.row, coords.src.col-1))
         if unitAdversarialLeft is not None:
-            print("someone below me1")
-            # not same team & dst is where opponent located-> attack
+            # not same team & dst move is where opponent located at -> attack
             if unitAdversarialLeft.player != unit.player and unitDst == unitAdversarialLeft:
-                print("is enemy 1")
                 self.mod_health(
                     coords.src, -(abs(unitDst.damage_amount(unit))))
                 self.mod_health(coords.dst, -
                                 (abs(unit.damage_amount(unitDst))))
-                print("attacked")
-                print(unitDst.damage_amount(unit))
-                print(abs(unit.damage_amount(unitDst)))
                 return (True, "")
-            # same team & dst is where hellper located -> repair
+            # same team & dst move is where friendly unit located at -> repair
             elif unitAdversarialLeft.player == unit.player and unitDst == unitAdversarialLeft and ((unit.type == UnitType.AI and (unitAdversarialLeft.type == UnitType.Virus or unitAdversarialLeft.type == UnitType.Tech)) or (unit.type == UnitType.Tech and (unitAdversarialLeft.type == UnitType.AI or unitAdversarialLeft.type == UnitType.Firewall or unitAdversarialLeft.type == UnitType.Program))):
-                print("is friends 1")
-                print(unit.repair_amount(unitDst))
                 if 0 < unit.repair_amount(unitDst) and unit.repair_amount(unitDst) < 9:
                     self.mod_health(
                         coords.dst, +(abs(unit.repair_amount(unitDst))))
-                    print("repaired ")
                     return (True, "")
                 else:
-                    print("cant repair - max health")
-                    return (False, "cant repair - max health")
+                    return (False, "can't repair - max health")
 
-        # attack when opponent is on the right of unit
+        # attack/repair when another unit is on right of my unit
         unitAdversarialRight = self.get(
             Coord(coords.src.row, coords.src.col+1))
         if unitAdversarialRight is not None:
-            print("someone below me1")
-            # not same team & dst is where opponent located-> attack
+            # not same team & dst move is where opponent located at -> attack
             if unitAdversarialRight.player != unit.player and unitDst == unitAdversarialRight:
-                print("is enemy 1")
                 self.mod_health(
                     coords.src, -(abs(unitDst.damage_amount(unit))))
                 self.mod_health(coords.dst, -
                                 (abs(unit.damage_amount(unitDst))))
-                print("attacked")
-                print(unitDst.damage_amount(unit))
-                print(abs(unit.damage_amount(unitDst)))
                 return (True, "")
-            # same team & dst is where hellper located -> repair
+            # same team & dst move is where friendly unit located at -> repair
             elif unitAdversarialRight.player == unit.player and unitDst == unitAdversarialRight and ((unit.type == UnitType.AI and (unitAdversarialRight.type == UnitType.Virus or unitAdversarialRight.type == UnitType.Tech)) or (unit.type == UnitType.Tech and (unitAdversarialRight.type == UnitType.AI or unitAdversarialRight.type == UnitType.Firewall or unitAdversarialRight.type == UnitType.Program))):
-                print("is friends 1")
-                print(unit.repair_amount(unitDst))
                 if 0 < unit.repair_amount(unitDst) and unit.repair_amount(unitDst) < 9:
                     self.mod_health(
                         coords.dst, +(abs(unit.repair_amount(unitDst))))
-                    print("repaired ")
                     return (True, "")
                 else:
-                    print("cant repair - max health")
-                    return (False, "cant repair - max health")
+                    return (False, "can't repair - max health")
 
         return (False, "invalid move")
 
