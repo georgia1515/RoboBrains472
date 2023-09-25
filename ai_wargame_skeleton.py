@@ -411,6 +411,8 @@ class Game:
         if self.is_valid_move(coords):
             self.set(coords.dst, self.get(coords.src))
             self.set(coords.src, None)
+
+            self.trace_each_action(coords.src, coords.dst)
             return (True, "")
 
         unit = self.get(coords.src)
@@ -432,29 +434,22 @@ class Game:
             self.mod_health(Coord(coords.src.row+1, coords.src.col-1), -2)
             self.mod_health(Coord(coords.src.row, coords.src.col-1), -2)
             self.mod_health(Coord(coords.src.row-1, coords.src.col-1), -2)
+
+            self.trace_each_action(coords.src, coords.dst)
             return (True, "")
 
+        # get coordinates of adversial unit
         unitAdversarialUp = self.get(
             Coord(coords.src.row-1, coords.src.col))
-        if self.has_attack_or_repair(unitAdversarialUp, unit, unitDst, coords):
-            return (True, "")
-
-        # attack/repair when another unit is below my unit
         unitAdversarialDown = self.get(
             Coord(coords.src.row+1, coords.src.col))
-        if self.has_attack_or_repair(unitAdversarialDown, unit, unitDst, coords):
-            return (True, "")
-
-        # attack/repair when another unit is on left of my unit
-        unitAdversarialLeft = self.get(
-            Coord(coords.src.row, coords.src.col-1))
-        if self.has_attack_or_repair(unitAdversarialLeft, unit, unitDst, coords):
-            return (True, "")
-
-        # attack/repair when another unit is on right of my unit
         unitAdversarialRight = self.get(
             Coord(coords.src.row, coords.src.col+1))
-        if self.has_attack_or_repair(unitAdversarialRight, unit, unitDst, coords):
+        unitAdversarialLeft = self.get(
+            Coord(coords.src.row, coords.src.col-1))
+        
+        if self.has_attack_or_repair(unitAdversarialUp, unit, unitDst, coords) or self.has_attack_or_repair(unitAdversarialDown, unit, unitDst, coords) or self.has_attack_or_repair(unitAdversarialLeft, unit, unitDst, coords) or self.has_attack_or_repair(unitAdversarialRight, unit, unitDst, coords):
+            self.trace_each_action(coords.src, coords.dst)
             return (True, "")
 
         return (False, "invalid move")
