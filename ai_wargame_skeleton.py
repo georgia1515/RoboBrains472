@@ -325,7 +325,7 @@ class Game:
         if target is not None:
             target.mod_health(health_delta)
             self.remove_dead(coord)
-
+        
     def is_valid_move(self, coords: CoordPair) -> bool:
         """Validate a move expressed as a CoordPair. TODO: WRITE MISSING CODE!!!"""
         if not self.is_valid_coord(coords.src) or not self.is_valid_coord(coords.dst):  # validate if coord inside board game
@@ -341,26 +341,26 @@ class Game:
             return False
 
         # validate when unit engaged in combat with adversial unit -> both unit can't move
-        # adversial unit above my unit
         unitAdversarialUp = self.get(Coord(coords.src.row-1, coords.src.col))
-        if unitAdversarialUp is not None and unitAdversarialUp.player != unit.player:
-            return False
-
-        # adversial unit below my unit
         unitAdversarialDown = self.get(Coord(coords.src.row+1, coords.src.col))
-        if unitAdversarialDown is not None and unitAdversarialDown.player != unit.player:
-            return False
-
-        # adversial unit on left of my unit
         unitAdversarialLeft = self.get(Coord(coords.src.row, coords.src.col-1))
-        if unitAdversarialLeft is not None and unitAdversarialLeft.player != unit.player:
+        unitAdversarialRight = self.get(Coord(coords.src.row, coords.src.col+1))
+
+        # adversial unit above, below, left, or right of my unit
+        if (unitAdversarialUp is not None and unitAdversarialUp.player != unit.player) or (unitAdversarialDown is not None and unitAdversarialDown.player != unit.player) or (unitAdversarialLeft is not None and unitAdversarialLeft.player != unit.player) or (unitAdversarialRight is not None and unitAdversarialRight.player != unit.player):
             return False
 
-        # adversial unit on right of my unit
-        unitAdversarialRight = self.get(
-            Coord(coords.src.row, coords.src.col+1))
-        if unitAdversarialRight is not None and unitAdversarialRight.player != unit.player:
-            return False
+        # if unitAdversarialDown is not None and unitAdversarialDown.player != unit.player:
+        #     return False
+
+        # # adversial unit on left of my unit
+        # if unitAdversarialLeft is not None and unitAdversarialLeft.player != unit.player:
+        #     return False
+
+        # # adversial unit on right of my unit
+        
+        # if unitAdversarialRight is not None and unitAdversarialRight.player != unit.player:
+        #     return False
 
         # track unit movement
         deplacementMoveCol = coords.dst.col - coords.src.col
@@ -386,6 +386,9 @@ class Game:
 
         unit = self.get(coords.dst)
         return (unit is None)
+    
+    
+
 
     def perform_move(self, coords: CoordPair) -> Tuple[bool, str]:
         """Validate and perform a move expressed as a CoordPair. TODO: WRITE MISSING CODE!!!"""
@@ -419,84 +422,49 @@ class Game:
 
         unitAdversarialUp = self.get(
             Coord(coords.src.row-1, coords.src.col))
-        if unitAdversarialUp is not None:
-            # not same team & dst move is where opponent located at -> attack
-            if unitAdversarialUp.player != unit.player and unitDst == unitAdversarialUp:
-                self.mod_health(
-                    coords.src, -(abs(unitDst.damage_amount(unit))))
-                self.mod_health(coords.dst, -
-                                (abs(unit.damage_amount(unitDst))))
-                return (True, "")
-            # same team & dst move is where friendly unit located at -> repair
-            elif unitAdversarialUp.player == unit.player and unitDst == unitAdversarialUp and ((unit.type == UnitType.AI and (unitAdversarialUp.type == UnitType.Virus or unitAdversarialUp.type == UnitType.Tech)) or (unit.type == UnitType.Tech and (unitAdversarialUp.type == UnitType.AI or unitAdversarialUp.type == UnitType.Firewall or unitAdversarialUp.type == UnitType.Program))):
-                if 0 < unit.repair_amount(unitDst) and unit.repair_amount(unitDst) < 9:
-                    self.mod_health(
-                        coords.dst, +(abs(unit.repair_amount(unitDst))))
-                    return (True, "")
-                else:
-                    return (False, "can't repair - max health")
+        if self.has_attack_or_repair(unitAdversarialUp, unit, unitDst, coords):
+            return (True, "")
 
         # attack/repair when another unit is below my unit
         unitAdversarialDown = self.get(
             Coord(coords.src.row+1, coords.src.col))
-        if unitAdversarialDown is not None:
-            # not same team & dst move is where opponent located at -> attack
-            if unitAdversarialDown.player != unit.player and unitDst == unitAdversarialDown:
-                self.mod_health(
-                    coords.src, -(abs(unitDst.damage_amount(unit))))
-                self.mod_health(coords.dst, -
-                                (abs(unit.damage_amount(unitDst))))
-                return (True, "")
-            # same team & dst move is where friendly unit located at -> repair
-            elif unitAdversarialDown.player == unit.player and unitDst == unitAdversarialDown and ((unit.type == UnitType.AI and (unitAdversarialDown.type == UnitType.Virus or unitAdversarialDown.type == UnitType.Tech)) or (unit.type == UnitType.Tech and (unitAdversarialDown.type == UnitType.AI or unitAdversarialDown.type == UnitType.Firewall or unitAdversarialDown.type == UnitType.Program))):
-                if 0 < unit.repair_amount(unitDst) and unit.repair_amount(unitDst) < 9:
-                    self.mod_health(
-                        coords.dst, +(abs(unit.repair_amount(unitDst))))
-                    return (True, "")
-                else:
-                    return (False, "can't repair - max health")
+        if self.has_attack_or_repair(unitAdversarialDown, unit, unitDst, coords):
+            return (True, "")
 
         # attack/repair when another unit is on left of my unit
         unitAdversarialLeft = self.get(
             Coord(coords.src.row, coords.src.col-1))
-        if unitAdversarialLeft is not None:
-            # not same team & dst move is where opponent located at -> attack
-            if unitAdversarialLeft.player != unit.player and unitDst == unitAdversarialLeft:
-                self.mod_health(
-                    coords.src, -(abs(unitDst.damage_amount(unit))))
-                self.mod_health(coords.dst, -
-                                (abs(unit.damage_amount(unitDst))))
-                return (True, "")
-            # same team & dst move is where friendly unit located at -> repair
-            elif unitAdversarialLeft.player == unit.player and unitDst == unitAdversarialLeft and ((unit.type == UnitType.AI and (unitAdversarialLeft.type == UnitType.Virus or unitAdversarialLeft.type == UnitType.Tech)) or (unit.type == UnitType.Tech and (unitAdversarialLeft.type == UnitType.AI or unitAdversarialLeft.type == UnitType.Firewall or unitAdversarialLeft.type == UnitType.Program))):
-                if 0 < unit.repair_amount(unitDst) and unit.repair_amount(unitDst) < 9:
-                    self.mod_health(
-                        coords.dst, +(abs(unit.repair_amount(unitDst))))
-                    return (True, "")
-                else:
-                    return (False, "can't repair - max health")
+        if self.has_attack_or_repair(unitAdversarialLeft, unit, unitDst, coords):
+            return (True, "")
+
 
         # attack/repair when another unit is on right of my unit
         unitAdversarialRight = self.get(
             Coord(coords.src.row, coords.src.col+1))
-        if unitAdversarialRight is not None:
-            # not same team & dst move is where opponent located at -> attack
-            if unitAdversarialRight.player != unit.player and unitDst == unitAdversarialRight:
-                self.mod_health(
-                    coords.src, -(abs(unitDst.damage_amount(unit))))
-                self.mod_health(coords.dst, -
-                                (abs(unit.damage_amount(unitDst))))
-                return (True, "")
-            # same team & dst move is where friendly unit located at -> repair
-            elif unitAdversarialRight.player == unit.player and unitDst == unitAdversarialRight and ((unit.type == UnitType.AI and (unitAdversarialRight.type == UnitType.Virus or unitAdversarialRight.type == UnitType.Tech)) or (unit.type == UnitType.Tech and (unitAdversarialRight.type == UnitType.AI or unitAdversarialRight.type == UnitType.Firewall or unitAdversarialRight.type == UnitType.Program))):
-                if 0 < unit.repair_amount(unitDst) and unit.repair_amount(unitDst) < 9:
-                    self.mod_health(
-                        coords.dst, +(abs(unit.repair_amount(unitDst))))
-                    return (True, "")
-                else:
-                    return (False, "can't repair - max health")
+        if self.has_attack_or_repair(unitAdversarialRight, unit, unitDst, coords):
+            return (True, "")
+    
 
         return (False, "invalid move")
+
+    def has_attack_or_repair(self, adjacentUnit, srcUnit, destUnit: Unit, coords: CoordPair) -> bool: 
+        if adjacentUnit is not None:
+            # not same team & dst move is where opponent located at -> attack
+            if adjacentUnit.player != srcUnit.player and destUnit == adjacentUnit:
+                self.mod_health(
+                    coords.src, -(abs(destUnit.damage_amount(srcUnit))))
+                self.mod_health(coords.dst, -
+                                (abs(srcUnit.damage_amount(destUnit))))
+                return True
+            # same team & dst move is where friendly unit located at -> repair
+            elif adjacentUnit.player == srcUnit.player and destUnit == adjacentUnit and ((srcUnit.type == UnitType.AI and (adjacentUnit.type == UnitType.Virus or adjacentUnit.type == UnitType.Tech)) or (srcUnit.type == UnitType.Tech and (adjacentUnit.type == UnitType.AI or adjacentUnit.type == UnitType.Firewall or adjacentUnit.type == UnitType.Program))):
+                if 0 < srcUnit.repair_amount(destUnit) and srcUnit.repair_amount(destUnit) < 9:
+                    self.mod_health(
+                        coords.dst, +(abs(srcUnit.repair_amount(destUnit))))
+                    return True
+                else:
+                    return False
+        return False
 
     def next_turn(self):
         """Transitions game to the next turn."""
