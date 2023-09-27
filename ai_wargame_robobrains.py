@@ -362,22 +362,8 @@ class Game:
         # adversial unit above, below, left, or right of my unit
         # except for type: Virus and Tech -> can move even engaged
         if unit.type == UnitType.AI or unit.type == UnitType.Firewall or unit.type == UnitType.Program:
-            print(
-                "not type: virus or tech - even in combat: can move. should not seee this with tech/virus")
             if (unitAdversarialUp is not None and unitAdversarialUp.player != unit.player) or (unitAdversarialDown is not None and unitAdversarialDown.player != unit.player) or (unitAdversarialLeft is not None and unitAdversarialLeft.player != unit.player) or (unitAdversarialRight is not None and unitAdversarialRight.player != unit.player):
                 return False
-
-        # if unitAdversarialDown is not None and unitAdversarialDown.player != unit.player:
-        #     return False
-
-        # # adversial unit on left of my unit
-        # if unitAdversarialLeft is not None and unitAdversarialLeft.player != unit.player:
-        #     return False
-
-        # # adversial unit on right of my unit
-
-        # if unitAdversarialRight is not None and unitAdversarialRight.player != unit.player:
-        #     return False
 
         # track unit movement
         deplacementMoveCol = coords.dst.col - coords.src.col
@@ -418,9 +404,7 @@ class Game:
         unit = self.get(coords.src)
         unitDst = self.get(coords.dst)
 
-        # repeat code: player can't play the unit of another move. Duplicate code: to change!
         if unit is None or unit.player != self.next_player:
-            print("first coord,empty 22")
             return (False, "invalid move")
 
         # self-destruct
@@ -448,13 +432,13 @@ class Game:
         unitAdversarialLeft = self.get(
             Coord(coords.src.row, coords.src.col-1))
         
-        if self.has_attack_or_repair(unitAdversarialUp, unit, unitDst, coords) or self.has_attack_or_repair(unitAdversarialDown, unit, unitDst, coords) or self.has_attack_or_repair(unitAdversarialLeft, unit, unitDst, coords) or self.has_attack_or_repair(unitAdversarialRight, unit, unitDst, coords):
+        if self.has_attacked_or_repaired(unitAdversarialUp, unit, unitDst, coords) or self.has_attacked_or_repaired(unitAdversarialDown, unit, unitDst, coords) or self.has_attacked_or_repaired(unitAdversarialLeft, unit, unitDst, coords) or self.has_attacked_or_repaired(unitAdversarialRight, unit, unitDst, coords):
             self.trace_each_action(coords.src, coords.dst)
             return (True, "")
 
         return (False, "invalid move")
 
-    def has_attack_or_repair(self, adjacentUnit, srcUnit, destUnit: Unit, coords: CoordPair) -> bool:
+    def has_attacked_or_repaired(self, adjacentUnit, srcUnit, destUnit: Unit, coords: CoordPair) -> bool:
         if adjacentUnit is not None:
             # not same team & dst move is where opponent located at -> attack
             if adjacentUnit.player != srcUnit.player and destUnit == adjacentUnit:
@@ -686,9 +670,9 @@ class Game:
     def trace_each_action(self, src, dest):
         with open(self.gameTrace_path, 'a') as f:
             f.write("____________________________________________ \n \n")
-            f.write("Turn number: {}/{} \n".format(self.turns_played + 1, self.options.max_turns) +
-                    "Player: {} \n".format(self.next_player.name) +
-                    "Action: {} to {} \n".format(src, dest) +
+            f.write(f"Turn number: {self.turns_played + 1}/{self.options.max_turns} \n" +
+                    f"Player: {self.next_player.name} \n" +
+                    f"Action: {src} to {dest} \n" +
                     "AI time for action: {}\n".format("TODO") +
                     "AI heuristic score: {}\n \n".format("TODO") +
                     "New configuration of the board: \n" +
@@ -745,7 +729,6 @@ def main():
         # If file does not exist, then create it
         if not os.path.exists(game.gameTrace_path):
             with open(game.gameTrace_path, 'w') as file:
-                now = datetime.now()
                 file.write('GAME TRACE \n \n')
                 file.close()
 
@@ -757,13 +740,14 @@ def main():
                 file.write('GAME TRACE \n \n')
                 file.close()
 
+        # Write game parameters and initial configuration of the board
         with open(game.gameTrace_path, 'a') as file:
             file.write(
                 'Game parameters: \n' +
-                '\tTimeout time (s): {}\n'.format(options.max_time) +
-                '\tMax number of turns: {}\n'.format(options.max_turns) +
-                '\tAlpha-beta (T/F): {}\n'.format(options.alpha_beta) +
-                '\tPlay modes: {}\n'.format(options.game_type.name) +
+                f'\tTimeout time (s): {options.max_time}\n' +
+                f'\tMax number of turns: {options.max_turns}\n' +
+                f'\tAlpha-beta (T/F): {options.alpha_beta}\n' +
+                f'\tPlay modes: {options.game_type.name}\n' +
                 '\tHeuristic: {}'.format('TODO__heuristic') +
                 '\n \n' +
                 'INITIAL CONFIGURATION OF THE BOARD \n' +
@@ -781,8 +765,8 @@ def main():
         if winner is not None:
             with open(game.gameTrace_path, 'a') as file:
                 file.write(
-                    '\n \n GAME OVER \n' +
-                    "{} wins in {}".format(winner.name, game.turns_played)
+                    '\n \nGAME OVER!!!!!!! \n' +
+                    f"{winner.name} wins in {game.turns_played} turns"
                 )
 
             print(f"{winner.name} wins!")
