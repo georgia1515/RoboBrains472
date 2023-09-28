@@ -719,8 +719,7 @@ def main():
     # create a new game
     game = Game(
         options=options,
-        gameTrace_path='./gameTrace/gameTrace-{}-{}-{}.txt'.format(
-            options.alpha_beta, options.max_time, options.max_turns)
+        gameTrace_path=f'./gameTrace-{options.alpha_beta}-{options.max_time}-{options.max_turns}.txt'
     )
 
     # game trace path
