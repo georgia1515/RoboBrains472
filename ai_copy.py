@@ -328,35 +328,11 @@ class Game:
         unit = self.get(coord)
         if unit is not None and not unit.is_alive():
             self.set(coord, None)
-
-            # AI
             if unit.type == UnitType.AI:
                 if unit.player == Player.Attacker:
                     self._attacker_has_ai = False
                 else:
                     self._defender_has_ai = False
-            
-            # Program
-            if unit.type == UnitType.Program:
-                if unit.player == Player.Attacker:
-                    self.numOfProgramsAttacker-1
-                else:
-                    self.numOfProgramsDefender-1
-
-            # Firewall
-            if unit.type == UnitType.Firewall:
-                if unit.player == Player.Attacker:
-                    self.numOfFirewallAttacker-1
-                else:
-                    self.numOfFirewallDefendder-1
-
-            # Tech
-            if unit.type == UnitType.Tech and unit.player == Player.Defender:
-                    self.numOfTechs-1
-            
-            # Virus
-            if unit.type == UnitType.Virus and unit.player == Player.Attacker:
-                    self.numOfViruses-1
 
     def mod_health(self, coord: Coord, health_delta: int):
         """Modify health of unit at Coord (positive or negative delta)."""
@@ -632,7 +608,7 @@ class Game:
         start_time = datetime.now()
         # (score, move, avg_depth) = self.random_move()
         # (score, best_move, avg_depth) = self.minimax_alpha_beta(self.options.max_depth, -MAX_HEURISTIC_SCORE, MAX_HEURISTIC_SCORE, True)
-        (score, best_move, avg_depth) = self.minimax(self.options.max_depth, self.next_player, 0)
+        (score, best_move, avg_depth) = self.minimax_alpha_beta(self.options.max_depth, MIN_HEURISTIC_SCORE, MAX_HEURISTIC_SCORE, self.next_player, 0)
 
         elapsed_seconds = (datetime.now() - start_time).total_seconds()
         self.stats.total_seconds += elapsed_seconds
@@ -649,7 +625,7 @@ class Game:
         print(f"Elapsed time: {elapsed_seconds:0.1f}s")
         return best_move
     
-    def minimax(self, depth, isAttacker, current_depth):
+    def minimax_alpha_beta(self, depth, alpha, beta, isAttacker, current_depth):
         
         if depth == 0 or self.is_finished():
             return self.chosen_heuristic(), None, current_depth
@@ -660,10 +636,13 @@ class Game:
             for move in self.move_candidates():
                 new_game = self.clone()
                 new_game.perform_move(move)
-                score, _, avg_depth = new_game.minimax(depth - 1, new_game.next_player, current_depth + 1)
+                score, _, avg_depth = new_game.minimax_alpha_beta(depth - 1, alpha, beta, new_game.next_player, current_depth + 1)
                 if score > max_score:
                     max_score = score
                     best_move = move
+                alpha = max(alpha, max_score)
+                # if beta <= alpha:
+                    # break  # Alpha-beta pruning
             return max_score, best_move, (current_depth + avg_depth) / 2
 
         else:
@@ -672,10 +651,13 @@ class Game:
             for move in self.move_candidates():
                 new_game = self.clone()
                 new_game.perform_move(move)
-                score, _, avg_depth = new_game.minimax(depth - 1,  new_game.next_player, current_depth + 1)
+                score, _, avg_depth = new_game.minimax_alpha_beta(depth - 1, alpha, beta, new_game.next_player, current_depth + 1)
                 if score < min_score:
                     min_score = score
                     best_move = move
+                beta = min(beta, min_score)
+                # if beta <= alpha:
+                #     break  # Alpha-beta pruning
             return min_score, best_move, (current_depth + avg_depth) / 2
     
     def chosen_heuristic(self):
