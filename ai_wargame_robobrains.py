@@ -568,13 +568,13 @@ class Game:
         """Check if the game is over and returns winner"""
         if self.options.max_turns is not None and self.turns_played >= self.options.max_turns:
             return Player.Defender
-        elif self._attacker_has_ai:
+        if self._attacker_has_ai:
             if self._defender_has_ai:
                 return None
             else:
-                return Player.Attacker
-        elif self._defender_has_ai:
-            return Player.Defender
+                return Player.Attacker    
+        return Player.Defender
+
 
     def move_candidates(self) -> Iterable[CoordPair]:
         """Generate valid move candidates for the next player."""
@@ -600,7 +600,10 @@ class Game:
     def suggest_move(self) -> CoordPair | None:
         """Suggest the next move using minimax alpha beta. TODO: REPLACE RANDOM_MOVE WITH PROPER GAME LOGIC!!!"""
         start_time = datetime.now()
-        (score, move, avg_depth) = self.random_move()
+        # (score, move, avg_depth) = self.random_move()
+        # (score, best_move, avg_depth) = self.minimax_alpha_beta(self.options.max_depth, -MAX_HEURISTIC_SCORE, MAX_HEURISTIC_SCORE, True)
+        (score, best_move, avg_depth) = self.minimax_alpha_beta(self, self.options.max_depth, -MAX_HEURISTIC_SCORE, MAX_HEURISTIC_SCORE, True)
+
         elapsed_seconds = (datetime.now() - start_time).total_seconds()
         self.stats.total_seconds += elapsed_seconds
         print(f"Heuristic score: {score}")
@@ -614,7 +617,82 @@ class Game:
             print(
                 f"Eval perf.: {total_evals/self.stats.total_seconds/1000:0.1f}k/s")
         print(f"Elapsed time: {elapsed_seconds:0.1f}s")
-        return move
+        return best_move
+    
+
+    def minimax_alpha_beta(self, game, depth, alpha, beta, maximizing_player, current_depth=0):
+        if depth == 0 or self.is_finished():
+            return self.evaluate(game), None, current_depth
+
+        if maximizing_player:
+            max_score = float("-inf")
+            best_move = None
+            for move in self.move_candidates():
+                new_game = self.clone()
+                new_game.perform_move(move)
+                score, _, avg_depth = self.minimax_alpha_beta(
+                    new_game, depth - 1, alpha, beta, False, current_depth + 1)
+                if score > max_score:
+                    max_score = score
+                    best_move = move
+                alpha = max(alpha, max_score)
+                # if beta <= alpha:
+                    # break  # Alpha-beta pruning
+            return max_score, best_move, (current_depth + avg_depth) / 2
+
+        else:
+            min_score = float("inf")
+            best_move = None
+            for move in self.move_candidates():
+                new_game = self.clone()
+                new_game.perform_move(move)
+                score, _, avg_depth = self.minimax_alpha_beta(
+                    new_game, depth - 1, alpha, beta, True, current_depth + 1)
+                if score < min_score:
+                    min_score = score
+                    best_move = move
+                beta = min(beta, min_score)
+                # if beta <= alpha:
+                #     break  # Alpha-beta pruning
+            return min_score, best_move, (current_depth + avg_depth) / 2
+    
+    def evaluate(self, game):
+        # Initialize the evaluation score
+        score = 0
+
+        # Define weights for different factors
+        unit_weights = {
+            UnitType.AI: 100,   # Weight for AI units
+            UnitType.Tech: 50,  # Weight for Tech units
+            UnitType.Virus: 50, # Weight for Virus units
+            UnitType.Program: 30,  # Weight for Program units
+            UnitType.Firewall: 20  # Weight for Firewall units
+        }
+
+        # Iterate through the game board and evaluate each cell
+        rowsnum= 1 #num of rows
+        colnum= 1 #num of columns
+        for row in range(rowsnum):
+            for col in range(colnum):
+                coord = Coord(row, col)
+                unit = game.get(coord)
+
+                if unit:
+                    # Adjust the score based on the unit's type and player
+                    weight = unit_weights.get(unit.type, 0)
+                    if unit.player == Player.Attacker:
+                        score += weight
+                    else:
+                        score -= weight
+
+                    # Adjust the score based on unit health (favor healthier units)
+                    score += unit.health
+
+                    # Implement additional factors based on your game's objectives
+                    # For example, consider unit positioning, engagement in combat, etc.
+
+        return score
+
 
     def post_move_to_broker(self, move: CoordPair):
         """Send a move to the game broker."""
