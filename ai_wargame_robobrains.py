@@ -342,24 +342,24 @@ class Game:
             # Program
             if unit.type == UnitType.Program:
                 if unit.player == Player.Attacker:
-                    self.numOfProgramsAttacker-1
+                    self.numOfProgramsAttacker -= 1
                 else:
-                    self.numOfProgramsDefender-1
+                    self.numOfProgramsDefender -= 1
 
             # Firewall
             if unit.type == UnitType.Firewall:
                 if unit.player == Player.Attacker:
-                    self.numOfFirewallsAttacker-1
+                    self.numOfFirewallsAttacker -= 1
                 else:
-                    self.numOfFirewallsDefender-1
+                    self.numOfFirewallsDefender -= 1
 
             # Tech
             if unit.type == UnitType.Tech and unit.player == Player.Defender:
-                self.numOfTechs-1
+                self.numOfTechs -= 1
             
             # Virus
             if unit.type == UnitType.Virus and unit.player == Player.Attacker:
-                self.numOfViruses-1
+                self.numOfViruses -= 1
             
             self.set(coord, None)
 
@@ -637,9 +637,7 @@ class Game:
         start_time = datetime.now()
         # (score, move, avg_depth) = self.random_move()
         # (score, best_move, avg_depth) = self.minimax_alpha_beta(self.options.max_depth, -MAX_HEURISTIC_SCORE, MAX_HEURISTIC_SCORE, True)
-        (score, best_move, avg_depth) = self.minimax(self.options.max_depth, self.next_player, 0)
-
-        print(f"SCOREEEEEEEEEEEEEEE: {score}")
+        (score, best_move, avg_depth) = self.minimax(self.next_player, 0)
 
         self.heuristic_score = score
 
@@ -658,30 +656,35 @@ class Game:
         print(f"Elapsed time: {elapsed_seconds:0.1f}s")
         return best_move
     
-    def minimax(self, depth, isAttacker, current_depth):
+    def minimax(self, isAttacker, current_depth):
         
-        if depth == 0 or self.is_finished():
+        if self.options.max_depth == current_depth or self.is_finished():
             return self.chosen_heuristic(), None, current_depth
 
+        # Maximize
         if isAttacker is Player.Attacker:
             max_score = float("-inf")
             best_move = None
+            # Creating valid moves for the NEXT PLAYER
             for move in self.move_candidates():
                 new_game = self.clone()
+                new_game.next_turn()
                 new_game.perform_move(move)
-                score, _, avg_depth = new_game.minimax(depth - 1, new_game.next_player, current_depth + 1)
+                score, _, avg_depth = new_game.minimax(new_game.next_player, current_depth + 1)
                 if score > max_score:
                     max_score = score
                     best_move = move
             return max_score, best_move, (current_depth + avg_depth) / 2
 
+        # Minimize
         else:
             min_score = float("inf")
             best_move = None
             for move in self.move_candidates():
                 new_game = self.clone()
+                new_game.next_turn()
                 new_game.perform_move(move)
-                score, _, avg_depth = new_game.minimax(depth - 1,  new_game.next_player, current_depth + 1)
+                score, _, avg_depth = new_game.minimax(new_game.next_player, current_depth + 1)
                 if score < min_score:
                     min_score = score
                     best_move = move
@@ -698,32 +701,18 @@ class Game:
             return self.heuristicE0()
     
     def heuristicE0(self):
-        
-        score = 0
-        
-        # number of each unit for attacker
-        numOfVirusAttacker = self.numOfViruses
-        numOfTechAttacker = 0 # 0 because attackers do not have techs
-        numOfFirewallAttacker = self.numOfFirewallsAttacker
-        numOfProgramAttacker = self.numOfProgramsAttacker
-        if(self._attacker_has_ai):
-            numOfAiAttacker = 1
-        else:
+        # score = 0
+        if(not self._attacker_has_ai):
             numOfAiAttacker = 0
-
-        # number of each unit for defender
-        numOfVirusDefender = 0 # 0 because defenders do not have viruses
-        numOfTechDefender = self.numOfTechs
-        numOfFirewallDefender = self.numOfFirewallsDefender
-        numOfProgramDefender = self.numOfProgramsDefender
-        if(self._defender_has_ai):
-            numOfAiDefender = 1
         else:
+            numOfAiAttacker = 1
+
+        if(not self._defender_has_ai):
             numOfAiDefender = 0
-        
-        score = (3 * numOfVirusAttacker + 3 * numOfTechAttacker + 3 * numOfFirewallAttacker + 3 * numOfProgramAttacker + 9999 * numOfAiAttacker) - (3 * numOfVirusDefender + 3 * numOfTechDefender + 3 * numOfFirewallDefender + 3 * numOfProgramDefender + 9999 * numOfAiDefender)
-        # print(score)
-        return score
+        else:
+            numOfAiDefender = 1
+            
+        return ((3 * self.numOfViruses) + (3 * self.numOfFirewallsAttacker) + (3 * self.numOfProgramsAttacker) + (9999 * numOfAiAttacker)) - ((3 * self.numOfTechs) + (3 * self.numOfFirewallsDefender) + (3 * self.numOfProgramsDefender) + (9999 * numOfAiDefender))
     
     def heuristicE1(self):
         score = 0
@@ -930,7 +919,7 @@ def main():
                 f'\tMax number of turns: {options.max_turns}\n' +
                 f'\tAlpha-beta (T/F): {options.alpha_beta}\n' +
                 f'\tPlay modes: {options.game_type.name}\n' +
-                '\tHeuristic: {}'.format('TODO__heuristic') +
+                f'\tHeuristic: {options.heuristic}' +
                 '\n \n' +
                 'INITIAL CONFIGURATION OF THE BOARD \n' +
                 game.to_string() + '\n'
