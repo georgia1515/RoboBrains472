@@ -688,8 +688,11 @@ def main():
     parser = argparse.ArgumentParser(
         prog='ai_wargame',
         formatter_class=argparse.ArgumentDefaultsHelpFormatter)
-    parser.add_argument('--max_depth', type=int, help='maximum search depth')
     parser.add_argument('--max_time', type=float, help='maximum search time')
+    parser.add_argument('--max_turns', type=int, help='maximum number of turns')
+    # only minimax if alpha_beta is turned off
+    parser.add_argument('--alpha_beta_off', help='alpha beta pruning turned on', action='store_false') 
+    parser.add_argument('--max_depth', type=int, help='maximum search depth')
     parser.add_argument('--game_type', type=str, default="manual",
                         help='game type: auto|attacker|defender|manual')
     parser.add_argument('--broker', type=str, help='play via a game broker')
@@ -709,10 +712,14 @@ def main():
     options = Options(game_type=game_type)
 
     # override class defaults via command line options
-    if args.max_depth is not None:
-        options.max_depth = args.max_depth
     if args.max_time is not None:
         options.max_time = args.max_time
+    if args.max_turns is not None:
+        options.max_turns = args.max_turns
+    if args.alpha_beta_off is not None:
+        options.alpha_beta = args.alpha_beta_off
+    if args.max_depth is not None:
+        options.max_depth = args.max_depth
     if args.broker is not None:
         options.broker = args.broker
 
