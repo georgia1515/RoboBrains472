@@ -37,7 +37,6 @@ class Player(Enum):
         else:
             return Player.Attacker
 
-
 class GameType(Enum):
     AttackerVsDefender = 0
     AttackerVsComp = 1
@@ -239,6 +238,7 @@ class Options:
     max_turns: int | None = 100
     randomize_moves: bool = True
     broker: str | None = None
+    heuristic: int | None = 0   # default heuristic
 
 ##############################################################################################################
 # GAME STATISTICS
@@ -265,6 +265,12 @@ class Game:
     _attacker_has_ai: bool = True
     _defender_has_ai: bool = True
     gameTrace_path: str = ''
+    numOfProgramsAttacker: int = 2
+    numOfFirewallAttacker: int = 1
+    numOfProgramsDefender: int = 1
+    numOfFirewallDefendder: int = 2
+    numOfViruses: int = 2
+    numOfTechs:int = 2
 
     def __post_init__(self):
         """Automatically called after class init to set up the default board state."""
@@ -602,7 +608,7 @@ class Game:
         start_time = datetime.now()
         # (score, move, avg_depth) = self.random_move()
         # (score, best_move, avg_depth) = self.minimax_alpha_beta(self.options.max_depth, -MAX_HEURISTIC_SCORE, MAX_HEURISTIC_SCORE, True)
-        (score, best_move, avg_depth) = self.minimax_alpha_beta(self, self.options.max_depth, -MAX_HEURISTIC_SCORE, MAX_HEURISTIC_SCORE, True)
+        (score, best_move, avg_depth) = self.minimax_alpha_beta(self, self.options.max_depth, MIN_HEURISTIC_SCORE, MAX_HEURISTIC_SCORE, True)
 
         elapsed_seconds = (datetime.now() - start_time).total_seconds()
         self.stats.total_seconds += elapsed_seconds
@@ -620,9 +626,9 @@ class Game:
         return best_move
     
 
-    def minimax_alpha_beta(self, game, depth, alpha, beta, maximizing_player, current_depth=0):
+    def minimax_alpha_beta(self, depth, alpha, beta, maximizing_player, current_depth=0):
         if depth == 0 or self.is_finished():
-            return self.evaluate(game), None, current_depth
+            return self.chosen_heuristic(), None, current_depth
 
         if maximizing_player:
             max_score = float("-inf")
@@ -630,8 +636,7 @@ class Game:
             for move in self.move_candidates():
                 new_game = self.clone()
                 new_game.perform_move(move)
-                score, _, avg_depth = self.minimax_alpha_beta(
-                    new_game, depth - 1, alpha, beta, False, current_depth + 1)
+                score, _, avg_depth = new_game.minimax_alpha_beta(depth - 1, alpha, beta, False, current_depth + 1)
                 if score > max_score:
                     max_score = score
                     best_move = move
@@ -646,8 +651,7 @@ class Game:
             for move in self.move_candidates():
                 new_game = self.clone()
                 new_game.perform_move(move)
-                score, _, avg_depth = self.minimax_alpha_beta(
-                    new_game, depth - 1, alpha, beta, True, current_depth + 1)
+                score, _, avg_depth = new_game.minimax_alpha_beta(depth - 1, alpha, beta, True, current_depth + 1)
                 if score < min_score:
                     min_score = score
                     best_move = move
@@ -656,40 +660,85 @@ class Game:
                 #     break  # Alpha-beta pruning
             return min_score, best_move, (current_depth + avg_depth) / 2
     
-    def evaluate(self, game):
-        # Initialize the evaluation score
+    # def evaluate(self, game):
+    #     # Initialize the evaluation score
+    #     score = 0
+
+    #     # Define weights for different factors
+    #     unit_weights = {
+    #         UnitType.AI: 100,   # Weight for AI units
+    #         UnitType.Tech: 50,  # Weight for Tech units
+    #         UnitType.Virus: 50, # Weight for Virus units
+    #         UnitType.Program: 30,  # Weight for Program units
+    #         UnitType.Firewall: 20  # Weight for Firewall units
+    #     }
+
+    #     # Iterate through the game board and evaluate each cell
+    #     rowsnum= 1 #num of rows
+    #     colnum= 1 #num of columns
+    #     for row in range(rowsnum):
+    #         for col in range(colnum):
+    #             coord = Coord(row, col)
+    #             unit = game.get(coord)
+
+    #             if unit:
+    #                 # Adjust the score based on the unit's type and player
+    #                 weight = unit_weights.get(unit.type, 0)
+    #                 if unit.player == Player.Attacker:
+    #                     score += weight
+    #                 else:
+    #                     score -= weight
+
+    #                 # Adjust the score based on unit health (favor healthier units)
+    #                 score += unit.health
+
+    #                 # Implement additional factors based on your game's objectives
+    #                 # For example, consider unit positioning, engagement in combat, etc.
+
+    #     return score
+    
+    def chosen_heuristic(self):
+        if self.options.heuristic == 0:
+            return self.heuristicE0(self)
+        elif self.options.heuristic == 1:
+            return self.heuristicE1(self)
+        elif self.options.heuristic == 2:
+            return self.heuristicE2(self)
+        else:
+            return self.heuristicE0(self)
+    
+    def heuristicE0(self):
+        score = 0
+        
+        # number of each unit for attacker
+        numOfVirusAttacker = self.numOfViruses
+        numOfTechAttacker = 0 # 0 because attackers do not have techs
+        numOfFirewallAttacker = self.numOfFirewallAttacker
+        if(self._attacker_has_ai):
+            numOfAiAttacker = 1
+        else:
+            numOfAiAttacker = 0
+
+        # number of each unit for defender
+        numOfTechDefender = self.numOfTechs
+        numOfVirusDefender = 0 # 0 because defenders do not have viruses
+        numOfFirewallDefender = self.numOfFirewallDefendder
+        if(self._defender_has_ai):
+            numOfAiDefender = 1
+        else:
+            numOfAiDefender = 0
+        
+        score = (3 * numOfVirusAttacker + 3 * numOfTechAttacker + 3 * numOfFirewallAttacker + 9999 * numOfAiAttacker) - (3 * numOfVirusDefender + 3 * numOfTechDefender + 3 * numOfFirewallDefender + 9999 * numOfAiDefender)
+
+        return score
+    
+    def heuristicE1(self):
         score = 0
 
-        # Define weights for different factors
-        unit_weights = {
-            UnitType.AI: 100,   # Weight for AI units
-            UnitType.Tech: 50,  # Weight for Tech units
-            UnitType.Virus: 50, # Weight for Virus units
-            UnitType.Program: 30,  # Weight for Program units
-            UnitType.Firewall: 20  # Weight for Firewall units
-        }
-
-        # Iterate through the game board and evaluate each cell
-        rowsnum= 1 #num of rows
-        colnum= 1 #num of columns
-        for row in range(rowsnum):
-            for col in range(colnum):
-                coord = Coord(row, col)
-                unit = game.get(coord)
-
-                if unit:
-                    # Adjust the score based on the unit's type and player
-                    weight = unit_weights.get(unit.type, 0)
-                    if unit.player == Player.Attacker:
-                        score += weight
-                    else:
-                        score -= weight
-
-                    # Adjust the score based on unit health (favor healthier units)
-                    score += unit.health
-
-                    # Implement additional factors based on your game's objectives
-                    # For example, consider unit positioning, engagement in combat, etc.
+        return score
+        
+    def heuristicE2(self):
+        score = 0
 
         return score
 
@@ -774,6 +823,7 @@ def main():
     parser.add_argument('--game_type', type=str, default="manual",
                         help='game type: auto|attacker|defender|manual')
     parser.add_argument('--broker', type=str, help='play via a game broker')
+    parser.add_argument('--heuristic', type=int, help='heuristic function options: 0/1/2')
     args = parser.parse_args()
 
     # parse the game type
@@ -800,6 +850,8 @@ def main():
         options.max_depth = args.max_depth
     if args.broker is not None:
         options.broker = args.broker
+    if args.heuristic is not None:
+        options.heuristic = args.heuristic
 
     # create a new game
     game = Game(
