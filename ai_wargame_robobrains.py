@@ -696,11 +696,17 @@ class Game:
         start_time = datetime.now()
         # Call minimax with start_time and time_limit parameters
         # score, best_move = self.minimax(self.next_player, 0)
+        # if (self.options.alpha_beta):
+        #     score, best_move = self.alpha_beta(
+        #         MIN_HEURISTIC_SCORE, MAX_HEURISTIC_SCORE, self.next_player, 0)
+        # else:
+        #     score, best_move = self.minimax(self.next_player, 0)
+
         if (self.options.alpha_beta):
-            score, best_move = self.alpha_beta(
+            score, best_move = self.alpha_beta_minimax(
                 MIN_HEURISTIC_SCORE, MAX_HEURISTIC_SCORE, self.next_player, 0)
         else:
-            score, best_move = self.minimax(self.next_player, 0)
+            score, best_move = self.alpha_beta_minimax(None, None, self.next_player, 0)
 
         self.stats.elapsed_time = (datetime.now() - start_time).total_seconds()
         self.stats.total_time += self.stats.elapsed_time
@@ -723,8 +729,8 @@ class Game:
         self.heuristic_score = score
         # Return the best move
         return best_move
-
-    def alpha_beta(self, alpha, beta, maximizing_player, current_depth):
+    
+    def alpha_beta_minimax(self, alpha, beta, maximizing_player, current_depth):
         if self.options.max_depth == current_depth or self.is_finished():
             self.stats.evaluations_per_depth[current_depth] += 1
             return self.chosen_heuristic(), None
@@ -738,14 +744,15 @@ class Game:
                 new_game = self.clone()  # similate game with possible move
                 new_game.perform_move(move)
                 new_game.next_turn()
-                score, _, = new_game.alpha_beta(
+                score, _, = new_game.alpha_beta_minimax(
                     alpha, beta, Player.Defender, current_depth + 1)
                 if score > max_score:
                     max_score = score
                     best_move = move
-                alpha = max(alpha, max_score)
-                if beta <= alpha:
-                    break  # Alpha-beta pruning
+                if(alpha is not None and beta is not None):
+                    alpha = max(alpha, max_score)
+                    if beta <= alpha:
+                        break  # Alpha-beta pruning
             return max_score, best_move
 
         else:
@@ -754,49 +761,90 @@ class Game:
                 new_game = self.clone()  # similate game with possible move
                 new_game.perform_move(move)
                 new_game.next_turn()
-                score, _, = new_game.alpha_beta(
+                score, _, = new_game.alpha_beta_minimax(
                     alpha, beta, Player.Attacker, current_depth + 1)
                 if score < min_score:
                     min_score = score
                     best_move = move
-                beta = min(beta, min_score)
-                if beta <= alpha:
-                    break  # Alpha-beta pruning
+                if(alpha is not None and beta is not None):
+                    beta = min(beta, min_score)
+                    if beta <= alpha:
+                        break  # Alpha-beta pruning
             return min_score, best_move
 
-    def minimax(self, maximizing_player, current_depth):
-        if self.options.max_depth == current_depth or self.is_finished():
-            self.stats.evaluations_per_depth[current_depth] += 1
-            return self.chosen_heuristic(), None
+    # def alpha_beta(self, alpha, beta, maximizing_player, current_depth):
+    #     if self.options.max_depth == current_depth or self.is_finished():
+    #         self.stats.evaluations_per_depth[current_depth] += 1
+    #         return self.chosen_heuristic(), None
 
-        best_move = None
-        self.stats.evaluations_per_depth[current_depth+1] += 1
+    #     best_move = None
+    #     self.stats.evaluations_per_depth[current_depth+1] += 1
 
-        if maximizing_player is Player.Attacker:
-            max_score = float("-inf")
-            for move in self.move_candidates():
-                new_game = self.clone()  # similate game with possible move
-                new_game.perform_move(move)
-                new_game.next_turn()
-                score, _, = new_game.minimax(
-                    Player.Defender, current_depth + 1)
-                if score > max_score:
-                    max_score = score
-                    best_move = move
-            return max_score, best_move
+    #     if maximizing_player is Player.Attacker:
+    #         max_score = float("-inf")
+    #         for move in self.move_candidates():
+    #             new_game = self.clone()  # similate game with possible move
+    #             new_game.perform_move(move)
+    #             new_game.next_turn()
+    #             score, _, = new_game.alpha_beta(
+    #                 alpha, beta, Player.Defender, current_depth + 1)
+    #             if score > max_score:
+    #                 max_score = score
+    #                 best_move = move
+    #             alpha = max(alpha, max_score)
+    #             if beta <= alpha:
+    #                 break  # Alpha-beta pruning
+    #         return max_score, best_move
 
-        else:
-            min_score = float("inf")
-            for move in self.move_candidates():
-                new_game = self.clone()  # similate game with possible move
-                new_game.perform_move(move)
-                new_game.next_turn()
-                score, _, = new_game.minimax(
-                    Player.Attacker, current_depth + 1)
-                if score < min_score:
-                    min_score = score
-                    best_move = move
-            return min_score, best_move
+    #     else:
+    #         min_score = float("inf")
+    #         for move in self.move_candidates():
+    #             new_game = self.clone()  # similate game with possible move
+    #             new_game.perform_move(move)
+    #             new_game.next_turn()
+    #             score, _, = new_game.alpha_beta(
+    #                 alpha, beta, Player.Attacker, current_depth + 1)
+    #             if score < min_score:
+    #                 min_score = score
+    #                 best_move = move
+    #             beta = min(beta, min_score)
+    #             if beta <= alpha:
+    #                 break  # Alpha-beta pruning
+    #         return min_score, best_move
+
+    # def minimax(self, maximizing_player, current_depth):
+    #     if self.options.max_depth == current_depth or self.is_finished():
+    #         self.stats.evaluations_per_depth[current_depth] += 1
+    #         return self.chosen_heuristic(), None
+
+    #     best_move = None
+    #     self.stats.evaluations_per_depth[current_depth+1] += 1
+
+    #     if maximizing_player is Player.Attacker:
+    #         max_score = float("-inf")
+    #         for move in self.move_candidates():
+    #             new_game = self.clone()  # similate game with possible move
+    #             new_game.perform_move(move)
+    #             new_game.next_turn()
+    #             score, _, = new_game.minimax(
+    #                 Player.Defender, current_depth + 1)
+    #             if score > max_score:
+    #                 max_score = score
+    #                 best_move = move
+    #         return max_score, best_move
+
+    #     else:
+    #         min_score = float("inf")
+    #         for move in self.move_candidates():
+    #             new_game = self.clone()  # similate game with possible move
+    #             new_game.perform_move(move)
+    #             new_game.next_turn()
+    #             score, _, = new_game.minimax(
+    #                 Player.Attacker, current_depth + 1)
+    #             if score < min_score:
+    #                 min_score = score
+    #                 best_move = move
+    #         return min_score, best_move
 
     def heuristicE0(self):
         return ((3 * self.numOfVirusesAttacker) + (0) + (3 * self.numOfFirewallAttacker) + (3 * self.numOfProgramsAttacker) + (9999 * self.numOfAIAttacker)
