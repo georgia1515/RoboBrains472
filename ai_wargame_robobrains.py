@@ -699,6 +699,23 @@ class Game:
         else:
             score, best_move = self.alpha_beta_minimax(None, None, self.next_player, 0)
 
+        print(score)
+        print("Attacker-------------------------------------------------------------")
+        print(self.numOfProgramsAttacker)
+        print(self.numOfFirewallAttacker)
+        print(self.numOfVirusesAttacker)
+        print(self.numOfAIAttacker)
+        print("Defender-------------------------------------------------------------")
+        print(self.numOfProgramsDefender)
+        print(self.numOfFirewallDefender)
+        print(self.numOfTechsDefender)
+        print(self.numOfAIDefender)
+        print("-------------------------------------------------------------")
+        print((3 * (self.numOfVirusesAttacker - self.numOfTechsDefender)
+          + 3 * (self.numOfFirewallAttacker - self.numOfFirewallDefender)
+          + 3 * (self.numOfProgramsAttacker - self.numOfProgramsDefender)
+          + 9999 * (self.numOfAIAttacker - self.numOfAIDefender)))
+
         self.stats.elapsed_time = (datetime.now() - start_time).total_seconds()
         self.stats.total_time += self.stats.elapsed_time
         print(f"Heuristic score: {self.heuristic_score}")
@@ -716,6 +733,7 @@ class Game:
         # if self.stats.total_time > 0:
         #     print(f"Eval perf.: {total_evals/self.stats.total_time/1000:0.1f}k/s")
         print(f"Elapsed time: {self.stats.elapsed_time :0.1f}s")
+
 
         self.heuristic_score = score
         # Return the best move
@@ -763,9 +781,6 @@ class Game:
                         break  # Alpha-beta pruning
             return min_score, best_move
 
-    def heuristicE0(self):
-        return ((3 * self.numOfVirusesAttacker) + (0) + (3 * self.numOfFirewallAttacker) + (3 * self.numOfProgramsAttacker) + (9999 * self.numOfAIAttacker)
-                ) - ((0) + (3 * self.numOfTechsDefender) + (3 * self.numOfFirewallDefender) + (3 * self.numOfProgramsDefender) + (9999 * self.numOfAIDefender))
 
     def chosen_heuristic(self):
         if self.options.heuristic == 0:
@@ -776,6 +791,12 @@ class Game:
             return self.heuristicE2()
         else:
             return self.heuristicE0()
+    
+    def heuristicE0(self):
+        return ((3 * (self.numOfVirusesAttacker - self.numOfTechsDefender)
+          + 3 * (self.numOfFirewallAttacker - self.numOfFirewallDefender)
+          + 3 * (self.numOfProgramsAttacker - self.numOfProgramsDefender)
+          + 9999 * (self.numOfAIAttacker - self.numOfAIDefender)))
 
     def heuristicE1(self):
         score = 0
