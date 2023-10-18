@@ -332,6 +332,7 @@ class Game:
         """Remove unit at Coord if dead."""
         unit = self.get(coord)
         if unit is not None and not unit.is_alive():
+            self.set(coord, None)
             # AI
             if unit.type == UnitType.AI:
                 if unit.player == Player.Attacker:
@@ -361,7 +362,6 @@ class Game:
             if unit.type == UnitType.Virus and unit.player == Player.Attacker:
                 self.numOfViruses -= 1
             
-            self.set(coord, None)
 
     def mod_health(self, coord: Coord, health_delta: int):
         """Modify health of unit at Coord (positive or negative delta)."""
@@ -637,44 +637,44 @@ class Game:
         start_time = datetime.now()
         # (score, move, avg_depth) = self.random_move()
         # (score, best_move, avg_depth) = self.minimax_alpha_beta(self.options.max_depth, -MAX_HEURISTIC_SCORE, MAX_HEURISTIC_SCORE, True)
-        (score, best_move, avg_depth) = self.minimax(self.next_player, 0)
+        (score, best_move) = self.minimax(self.next_player, 0)
 
         self.heuristic_score = score
 
-        elapsed_seconds = (datetime.now() - start_time).total_seconds()
-        self.stats.total_seconds += elapsed_seconds
+        # elapsed_seconds = (datetime.now() - start_time).total_seconds()
+        # self.stats.total_seconds += elapsed_seconds
         print(f"Heuristic score: {score}")
-        print(f"Average recursive depth: {avg_depth:0.1f}")
-        print(f"Evals per depth: ", end='')
-        for k in sorted(self.stats.evaluations_per_depth.keys()):
-            print(f"{k}:{self.stats.evaluations_per_depth[k]} ", end='')
-        print()
-        total_evals = sum(self.stats.evaluations_per_depth.values())
-        if self.stats.total_seconds > 0:
-            print(
-                f"Eval perf.: {total_evals/self.stats.total_seconds/1000:0.1f}k/s")
-        print(f"Elapsed time: {elapsed_seconds:0.1f}s")
+        print(f"Best move: {best_move}")
+        print(f"Next player: {self.next_player}")
+        # print(f"Evals per depth: ", end='')
+        # for k in sorted(self.stats.evaluations_per_depth.keys()):
+        #     print(f"{k}:{self.stats.evaluations_per_depth[k]} ", end='')
+        # print()
+        # total_evals = sum(self.stats.evaluations_per_depth.values())
+        # if self.stats.total_seconds > 0:
+        #     print(
+        #         f"Eval perf.: {total_evals/self.stats.total_seconds/1000:0.1f}k/s")
+        # print(f"Elapsed time: {elapsed_seconds:0.1f}s")
         return best_move
     
-    def minimax(self, isAttacker, current_depth):
-        
+    def minimax(self, player, current_depth):
+        # Base case
         if self.options.max_depth == current_depth or self.is_finished():
-            return self.chosen_heuristic(), None, current_depth
+            return self.chosen_heuristic(), None
 
         # Maximize
-        if isAttacker is Player.Attacker:
+        if player is Player.Attacker:
             max_score = float("-inf")
             best_move = None
-            # Creating valid moves for the NEXT PLAYER
             for move in self.move_candidates():
                 new_game = self.clone()
                 new_game.next_turn()
                 new_game.perform_move(move)
-                score, _, avg_depth = new_game.minimax(new_game.next_player, current_depth + 1)
+                score, _ = new_game.minimax(Player.Defender, current_depth + 1)
                 if score > max_score:
                     max_score = score
                     best_move = move
-            return max_score, best_move, (current_depth + avg_depth) / 2
+            return max_score, best_move
 
         # Minimize
         else:
@@ -684,11 +684,11 @@ class Game:
                 new_game = self.clone()
                 new_game.next_turn()
                 new_game.perform_move(move)
-                score, _, avg_depth = new_game.minimax(new_game.next_player, current_depth + 1)
+                score, _ = new_game.minimax(Player.Attacker, current_depth + 1)
                 if score < min_score:
                     min_score = score
                     best_move = move
-            return min_score, best_move, (current_depth + avg_depth) / 2
+            return min_score, best_move
     
     def chosen_heuristic(self):
         if self.options.heuristic == 0:
