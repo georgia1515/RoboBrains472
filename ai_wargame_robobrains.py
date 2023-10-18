@@ -562,7 +562,8 @@ class Game:
                 if mv is not None:
                     (success, result) = self.perform_move(mv)
                     print(f"Broker {self.next_player.name}: ", end='')
-                    self.trace_each_action(mv.src, mv.dst)
+                    self.trace_each_action(
+                        mv.src, mv.dst)
                     print(result)
                     if success:
                         self.next_turn()
@@ -574,7 +575,8 @@ class Game:
                 (success, result) = self.perform_move(mv)
                 if success:
                     print(f"Player {self.next_player.name}: ", end='')
-                    self.trace_each_action(mv.src, mv.dst)
+                    self.trace_each_action(
+                        mv.src, mv.dst)
                     print(result)
                     self.next_turn()
                     break
@@ -641,12 +643,14 @@ class Game:
 
     def suggest_move(self):
 
-        # Call minimax with start_time and time_limit parameters
-        # score, best_move = self.minimax(self.next_player, 0)
+        # Call alpha_beta if user turn on. otherwise, call minimax with start_time and time_limit parameters
         if (self.options.alpha_beta):
             score, best_move = self.alpha_beta(
                 MIN_HEURISTIC_SCORE, MAX_HEURISTIC_SCORE, self.next_player, 0)
+        else:
+            score, best_move = self.minimax(self.next_player, 0)
 
+        self.heuristic_score = score
         # Return the best move
         return best_move
 
@@ -721,7 +725,8 @@ class Game:
             return min_score, best_move
 
     def heuristicE0(self):
-        return ((3 * self.numOfVirusesAttacker) + (0) + (3 * self.numOfFirewallAttacker) + (3 * self.numOfProgramsAttacker) + (9999 * self.numOfAIAttacker)) - ((0) + (3 * self.numOfTechsDefender) + (3 * self.numOfFirewallDefender) + (3 * self.numOfProgramsDefender) + (9999 * self.numOfAIDefender))
+        return ((3 * self.numOfVirusesAttacker) + (0) + (3 * self.numOfFirewallAttacker) + (3 * self.numOfProgramsAttacker) + (9999 * self.numOfAIAttacker)
+                ) - ((0) + (3 * self.numOfTechsDefender) + (3 * self.numOfFirewallDefender) + (3 * self.numOfProgramsDefender) + (9999 * self.numOfAIDefender))
 
     def chosen_heuristic(self):
         if self.options.heuristic == 0:
