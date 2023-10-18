@@ -37,6 +37,7 @@ class Player(Enum):
         else:
             return Player.Attacker
 
+
 class GameType(Enum):
     AttackerVsDefender = 0
     AttackerVsComp = 1
@@ -268,9 +269,11 @@ class Game:
     numOfProgramsAttacker: int = 2
     numOfFirewallAttacker: int = 1
     numOfProgramsDefender: int = 1
-    numOfFirewallDefendder: int = 2
-    numOfViruses: int = 2
-    numOfTechs:int = 2
+    numOfFirewallDefender: int = 2
+    numOfVirusesAttacker: int = 2
+    numOfTechsDefender: int = 2
+    numOfAIAttacker: int = 1
+    numOfAIDefender: int = 1
 
     def __post_init__(self):
         """Automatically called after class init to set up the default board state."""
@@ -335,28 +338,28 @@ class Game:
                     self._attacker_has_ai = False
                 else:
                     self._defender_has_ai = False
-            
+
             # Program
             if unit.type == UnitType.Program:
                 if unit.player == Player.Attacker:
-                    self.numOfProgramsAttacker-1
+                    self.numOfProgramsAttacker -= 1
                 else:
-                    self.numOfProgramsDefender-1
+                    self.numOfProgramsDefender -= 1
 
             # Firewall
             if unit.type == UnitType.Firewall:
                 if unit.player == Player.Attacker:
-                    self.numOfFirewallAttacker-1
+                    self.numOfFirewallAttacker -= 1
                 else:
-                    self.numOfFirewallDefendder-1
+                    self.numOfFirewallDefender -= 1
 
             # Tech
             if unit.type == UnitType.Tech and unit.player == Player.Defender:
-                    self.numOfTechs-1
-            
+                self.numOfTechsDefender -= 1
+
             # Virus
             if unit.type == UnitType.Virus and unit.player == Player.Attacker:
-                    self.numOfViruses-1
+                self.numOfVirusesAttacker -= 1
 
     def mod_health(self, coord: Coord, health_delta: int):
         """Modify health of unit at Coord (positive or negative delta)."""
@@ -461,7 +464,7 @@ class Game:
             Coord(coords.src.row, coords.src.col+1))
         unitAdversarialLeft = self.get(
             Coord(coords.src.row, coords.src.col-1))
-        
+
         if self.has_attacked_or_repaired(unitAdversarialUp, unit, unitDst, coords) or self.has_attacked_or_repaired(unitAdversarialDown, unit, unitDst, coords) or self.has_attacked_or_repaired(unitAdversarialLeft, unit, unitDst, coords) or self.has_attacked_or_repaired(unitAdversarialRight, unit, unitDst, coords):
             self.trace_each_action(coords.src, coords.dst)
             return (True, "")
@@ -602,9 +605,8 @@ class Game:
             if self._defender_has_ai:
                 return None
             else:
-                return Player.Attacker    
+                return Player.Attacker
         return Player.Defender
-
 
     def move_candidates(self) -> Iterable[CoordPair]:
         """Generate valid move candidates for the next player."""
@@ -627,57 +629,52 @@ class Game:
         else:
             return (0, None, 0)
 
-    def suggest_move(self) -> CoordPair | None:
-        """Suggest the next move using minimax alpha beta. TODO: REPLACE RANDOM_MOVE WITH PROPER GAME LOGIC!!!"""
-        start_time = datetime.now()
-        # (score, move, avg_depth) = self.random_move()
-        # (score, best_move, avg_depth) = self.minimax_alpha_beta(self.options.max_depth, -MAX_HEURISTIC_SCORE, MAX_HEURISTIC_SCORE, True)
-        (score, best_move, avg_depth) = self.minimax(self.options.max_depth, self.next_player, 0)
+    def suggest_move(self):
 
-        elapsed_seconds = (datetime.now() - start_time).total_seconds()
-        self.stats.total_seconds += elapsed_seconds
-        print(f"Heuristic score: {score}")
-        print(f"Average recursive depth: {avg_depth:0.1f}")
-        print(f"Evals per depth: ", end='')
-        for k in sorted(self.stats.evaluations_per_depth.keys()):
-            print(f"{k}:{self.stats.evaluations_per_depth[k]} ", end='')
-        print()
-        total_evals = sum(self.stats.evaluations_per_depth.values())
-        if self.stats.total_seconds > 0:
-            print(
-                f"Eval perf.: {total_evals/self.stats.total_seconds/1000:0.1f}k/s")
-        print(f"Elapsed time: {elapsed_seconds:0.1f}s")
+        # Call minimax with start_time and time_limit parameters
+        score, best_move, evals_per_depth = self.minimax(
+            self.next_player, 0)
+        # Return the best move
         return best_move
-    
-    def minimax(self, depth, isAttacker, current_depth):
-        
-        if depth == 0 or self.is_finished():
+
+    def minimax(self, maximizing_player, current_depth):
+        if self.options.max_depth == current_depth or self.is_finished():
             return self.chosen_heuristic(), None, current_depth
 
-        if isAttacker is Player.Attacker:
+# max
+        if maximizing_player is Player.Attacker:
             max_score = float("-inf")
             best_move = None
             for move in self.move_candidates():
-                new_game = self.clone()
+                new_game = self.clone()  # similate game with possible move
+                new_game.next_turn()
                 new_game.perform_move(move)
-                score, _, avg_depth = new_game.minimax(depth - 1, new_game.next_player, current_depth + 1)
+                score, _, avg_depth = new_game.minimax(
+                    Player.Defender, current_depth + 1)
                 if score > max_score:
                     max_score = score
                     best_move = move
             return max_score, best_move, (current_depth + avg_depth) / 2
 
+# min
         else:
             min_score = float("inf")
             best_move = None
             for move in self.move_candidates():
-                new_game = self.clone()
+                new_game = self.clone()  # similate game with possible move
+                new_game.next_turn
                 new_game.perform_move(move)
-                score, _, avg_depth = new_game.minimax(depth - 1,  new_game.next_player, current_depth + 1)
+                score, _, avg_depth = new_game.minimax(
+                    Player.Attacker, current_depth + 1)
                 if score < min_score:
                     min_score = score
                     best_move = move
             return min_score, best_move, (current_depth + avg_depth) / 2
-    
+
+    def heuristicE0(self):
+
+        return ((3 * self.numOfVirusesAttacker) + (0) + (3 * self.numOfFirewallAttacker) + (3 * self.numOfProgramsAttacker) + (9999 * self.numOfAIAttacker)) - ((0) + (3 * self.numOfTechsDefender) + (3 * self.numOfFirewallDefender) + (3 * self.numOfProgramsDefender) + (9999 * self.numOfAIDefender))
+
     def chosen_heuristic(self):
         if self.options.heuristic == 0:
             return self.heuristicE0()
@@ -687,42 +684,16 @@ class Game:
             return self.heuristicE2()
         else:
             return self.heuristicE0()
-    
-    def heuristicE0(self):
-        score = 0
-        
-        # number of each unit for attacker
-        numOfVirusAttacker = self.numOfViruses
-        numOfTechAttacker = 0 # 0 because attackers do not have techs
-        numOfFirewallAttacker = self.numOfFirewallAttacker
-        if(self._attacker_has_ai):
-            numOfAiAttacker = 1
-        else:
-            numOfAiAttacker = 0
 
-        # number of each unit for defender
-        numOfTechDefender = self.numOfTechs
-        numOfVirusDefender = 0 # 0 because defenders do not have viruses
-        numOfFirewallDefender = self.numOfFirewallDefendder
-        if(self._defender_has_ai):
-            numOfAiDefender = 1
-        else:
-            numOfAiDefender = 0
-        
-        score = (3 * numOfVirusAttacker + 3 * numOfTechAttacker + 3 * numOfFirewallAttacker + 9999 * numOfAiAttacker) - (3 * numOfVirusDefender + 3 * numOfTechDefender + 3 * numOfFirewallDefender + 9999 * numOfAiDefender)
-
-        return score
-    
     def heuristicE1(self):
         score = 0
 
         return score
-        
+
     def heuristicE2(self):
         score = 0
 
         return score
-
 
     def post_move_to_broker(self, move: CoordPair):
         """Send a move to the game broker."""
@@ -797,14 +768,17 @@ def main():
         prog='ai_wargame',
         formatter_class=argparse.ArgumentDefaultsHelpFormatter)
     parser.add_argument('--max_time', type=float, help='maximum search time')
-    parser.add_argument('--max_turns', type=int, help='maximum number of turns')
+    parser.add_argument('--max_turns', type=int,
+                        help='maximum number of turns')
     # only minimax if alpha_beta is turned off
-    parser.add_argument('--alpha_beta_off', help='alpha beta pruning turned on', action='store_false') 
+    parser.add_argument(
+        '--alpha_beta_off', help='alpha beta pruning turned on', action='store_false')
     parser.add_argument('--max_depth', type=int, help='maximum search depth')
     parser.add_argument('--game_type', type=str, default="manual",
                         help='game type: auto|attacker|defender|manual')
     parser.add_argument('--broker', type=str, help='play via a game broker')
-    parser.add_argument('--heuristic', type=int, help='heuristic function options: 0/1/2')
+    parser.add_argument('--heuristic', type=int,
+                        help='heuristic function options: 0/1/2')
     args = parser.parse_args()
 
     # parse the game type
