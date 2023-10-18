@@ -248,8 +248,10 @@ class Options:
 @dataclass(slots=True)
 class Stats:
     """Representation of the global game statistics."""
-    evaluations_per_depth: dict[int, int] = field(default_factory=dict)
-    total_seconds: float = 0.0
+    total_time: float = 0.0
+    elapsed_time: float = 0.0
+    evaluations_per_depth: dict[int, int] = field(default_factory=dict) # to get cumulative evals => sum(evaluations_per_depth.values())
+
 
 ##############################################################################################################
 # GAME MOVES
@@ -589,12 +591,17 @@ class Game:
         if mv is not None:
             (success, result) = self.perform_move(mv)
             if success:
-                print(f"Computer {self.next_player.name}: ", end='')
-                self.trace_each_action(mv.src, mv.dst)
-                print(f"")
-                print(result)
-                self.next_turn()
-        return mv
+                if self.stats.elapsed_time > self.options.max_time:
+                    print(f"Computer {self.next_player.name} has taken longer than the max time allowed!")
+                    return None
+                else:
+                    print(f"Computer {self.next_player.name}: ", end='')
+                    self.trace_each_action(mv.src, mv.dst)
+                    print(f"")
+                    print(result)
+                    self.next_turn()
+                    return mv
+            return mv
 
     def player_units(self, player: Player) -> Iterable[Tuple[Coord, Unit]]:
         """Iterates over all units belonging to a player."""
@@ -686,11 +693,32 @@ class Game:
     def suggest_move(self):
 
         # Call alpha_beta if user turn on. otherwise, call minimax with start_time and time_limit parameters
+        start_time = datetime.now()
+        # Call minimax with start_time and time_limit parameters
+        # score, best_move = self.minimax(self.next_player, 0)
         if (self.options.alpha_beta):
             score, best_move = self.alpha_beta(
                 MIN_HEURISTIC_SCORE, MAX_HEURISTIC_SCORE, self.next_player, 0)
         else:
             score, best_move = self.minimax(self.next_player, 0)
+
+        self.stats.elapsed_time = (datetime.now() - start_time).total_seconds()
+        self.stats.total_time += self.stats.elapsed_time
+        print(f"Heuristic score: {self.heuristic_score}")
+        print(f"Evals per depth: ",end='')
+        for k in sorted(self.stats.evaluations_per_depth.keys()):
+            print(f"{k}:{self.stats.evaluations_per_depth[k]} ",end='')
+        print()
+        print(f"Cumulative % evals by depth: ", end='')
+        for k in sorted(self.stats.evaluations_per_depth.keys()):
+            print(f"{k}:{self.stats.evaluations_per_depth[k]/sum(self.stats.evaluations_per_depth.values())*100:0.1f}% ",end='')
+        print()
+        total_evals = sum(self.stats.evaluations_per_depth.values())
+        print(f"Total evaluations: {total_evals}")
+
+        # if self.stats.total_time > 0:
+        #     print(f"Eval perf.: {total_evals/self.stats.total_time/1000:0.1f}k/s")
+        print(f"Elapsed time: {self.stats.elapsed_time :0.1f}s")
 
         self.heuristic_score = score
         # Return the best move
@@ -698,9 +726,11 @@ class Game:
 
     def alpha_beta(self, alpha, beta, maximizing_player, current_depth):
         if self.options.max_depth == current_depth or self.is_finished():
+            self.stats.evaluations_per_depth[current_depth] += 1
             return self.chosen_heuristic(), None
 
         best_move = None
+        self.stats.evaluations_per_depth[current_depth+1] += 1
 
         if maximizing_player is Player.Attacker:
             max_score = float("-inf")
@@ -736,9 +766,11 @@ class Game:
 
     def minimax(self, maximizing_player, current_depth):
         if self.options.max_depth == current_depth or self.is_finished():
+            self.stats.evaluations_per_depth[current_depth] += 1
             return self.chosen_heuristic(), None
 
         best_move = None
+        self.stats.evaluations_per_depth[current_depth+1] += 1
 
         if maximizing_player is Player.Attacker:
             max_score = float("-inf")
@@ -844,112 +876,35 @@ class Game:
     def trace_each_action(self, src, dest):
         with open(self.gameTrace_path, 'a') as f:
             f.write("____________________________________________ \n \n")
-            # print("____________________________________________ \n \n")
 
-            # human vs human
-            if (self.options.game_type == GameType.AttackerVsDefender):
-                f.write(f"Turn number: {self.turns_played + 1}/{self.options.max_turns} \n" +
+            # human
+            if (self.options.game_type == GameType.AttackerVsDefender) or (self.options.game_type == GameType.AttackerVsComp and self.next_player != Player.Defender) or (self.options.game_type == GameType.CompVsDefender and self.next_player != Player.Attacker):
+                    f.write(f"Turn number: {self.turns_played + 1}/{self.options.max_turns} \n" +
                         f"Player: {self.next_player.name} \n" +
                         f"Action: {src} to {dest} \n" +
-                        "New configuration of the board: \n" +
+                        "New configuration of the board: \n \n" +
                         self.draw_board() + "\n"
                         )
 
-                # print(f"Turn number: {self.turns_played + 1}/{self.options.max_turns} \n" +
-                #         f"Player: {self.next_player.name} \n" +
-                #         f"Action: {src} to {dest} \n" +
-                #         "New configuration of the board: \n" +
-                #         self.draw_board() + "\n"
-                #         )
-
-            # attacker vs computer
-            if (self.options.game_type == GameType.AttackerVsComp):
-                if (self.next_player != Player.Defender):
-                    f.write(f"Turn number: {self.turns_played + 1}/{self.options.max_turns} \n" +
-                            f"Player: {self.next_player.name} \n" +
-                            f"Action: {src} to {dest} \n" +
-                            self.draw_board() + "\n"
-                            )
-
-                    # print(f"Turn number: {self.turns_played + 1}/{self.options.max_turns} \n" +
-                    #       f"Player: {self.next_player.name} \n" +
-                    #       f"Action: {src} to {dest} \n" +
-                    #       self.draw_board() + "\n"
-                    #     )
-                else:
-                    # computer turn
-                    f.write(f"Turn number: {self.turns_played + 1}/{self.options.max_turns} \n" +
-                            f"Player: {self.next_player.name} \n" +
-                            f"Action: {src} to {dest} \n" +
-                            "AI time for action: {}\n".format("TODO") +
-                            f"AI heuristic score: {self.heuristic_score}\n \n" +
-                            "New configuration of the board: \n" +
-                            self.draw_board() + "\n"
-                            )
-
-                    # print(f"Turn number: {self.turns_played + 1}/{self.options.max_turns} \n" +
-                    #         f"Player: {self.next_player.name} \n" +
-                    #         f"Action: {src} to {dest} \n" +
-                    #         "AI time for action: {}\n".format("TODO") +
-                    #         f"AI heuristic score: {self.heuristic_score}\n \n" +
-                    #         "New configuration of the board: \n" +
-                    #         self.draw_board() + "\n"
-                    #         )
-
-            # computer vs defender
-            if (self.options.game_type == GameType.CompVsDefender):
-                if (self.next_player != Player.Defender):
-                    # computer turn
-                    f.write(f"Turn number: {self.turns_played + 1}/{self.options.max_turns} \n" +
-                            f"Player: {self.next_player.name} \n" +
-                            f"Action: {src} to {dest} \n" +
-                            "AI time for action: {}\n".format("TODO") +
-                            f"AI heuristic score: {self.heuristic_score}\n \n" +
-                            "New configuration of the board: \n" +
-                            self.draw_board() + "\n"
-                            )
-
-                    # print(f"Turn number: {self.turns_played + 1}/{self.options.max_turns} \n" +
-                    #         f"Player: {self.next_player.name} \n" +
-                    #         f"Action: {src} to {dest} \n" +
-                    #         "AI time for action: {}\n".format("TODO") +
-                    #         f"AI heuristic score: {self.heuristic_score}\n \n" +
-                    #         "New configuration of the board: \n" +
-                    #         self.draw_board() + "\n"
-                    #         )
-
-                else:
-                    f.write(f"Turn number: {self.turns_played + 1}/{self.options.max_turns} \n" +
-                            f"Player: {self.next_player.name} \n" +
-                            f"Action: {src} to {dest} \n" +
-                            self.draw_board() + "\n"
-                            )
-
-                #    print(f"Turn number: {self.turns_played + 1}/{self.options.max_turns} \n" +
-                #             f"Player: {self.next_player.name} \n" +
-                #             f"Action: {src} to {dest} \n" +
-                #             self.draw_board() + "\n"
-                #             )
-
-            # computer vs computer
-            if (self.options.game_type == GameType.CompVsComp):
+            # computer
+            if(self.options.game_type == GameType.CompVsComp) or (self.options.game_type == GameType.AttackerVsComp and self.next_player != Player.Attacker) or (self.options.game_type == GameType.CompVsDefender and self.next_player != Player.Defender):
+                evaluations_by_depth = "Cumulative evals by depth: "
+                evalutations_by_depth_percentage = "Cumulative % evals by depth: "
+                for k in sorted(self.stats.evaluations_per_depth.keys()):
+                    evaluations_by_depth += f"{k}:{self.stats.evaluations_per_depth[k]} "
+                    evalutations_by_depth_percentage += f"{k}:{self.stats.evaluations_per_depth[k]/sum(self.stats.evaluations_per_depth.values())*100:0.1f}% "
                 f.write(f"Turn number: {self.turns_played + 1}/{self.options.max_turns} \n" +
                         f"Player: {self.next_player.name} \n" +
                         f"Action: {src} to {dest} \n" +
-                        "AI time for action: {}\n".format("TODO") +
+                        f"AI time for action: {self.stats.elapsed_time :0.1f}s \n" +
                         f"AI heuristic score: {self.heuristic_score}\n \n" +
+                        f"Cumulative evals: {sum(self.stats.evaluations_per_depth.values())} \n" +
+                        evaluations_by_depth + "\n" +
+                        evalutations_by_depth_percentage + "\n" +
                         "New configuration of the board: \n" +
                         self.draw_board() + "\n"
                         )
 
-                # print(f"Turn number: {self.turns_played + 1}/{self.options.max_turns} \n" +
-                #             f"Player: {self.next_player.name} \n" +
-                #             f"Action: {src} to {dest} \n" +
-                #             "AI time for action: {}\n".format("TODO") +
-                #             f"AI heuristic score: {self.heuristic_score}\n \n" +
-                #             "New configuration of the board: \n" +
-                #             self.draw_board() + "\n"
-                #             )
 
 
 ##############################################################################################################
@@ -1006,6 +961,12 @@ def main():
         options=options,
         gameTrace_path=f'./gameTrace-{options.alpha_beta}-{options.max_time}-{options.max_turns}.txt'
     )
+
+    if(options.game_type == GameType.AttackerVsComp) or (options.game_type == GameType.CompVsDefender) or (options.game_type == GameType.CompVsComp):
+        
+        for i in range(1, game.options.max_depth + 1):
+            game.stats.evaluations_per_depth[i] = 0
+       
 
     # game trace path
     try:
@@ -1066,6 +1027,12 @@ def main():
             move = game.computer_turn()
             if move is not None:
                 game.post_move_to_broker(move)
+            elif move is None:
+                if player == Player.Attacker:
+                    print("Attacker has lost!")
+                else:
+                    print("Defender has lost!")
+                break
             else:
                 print("Computer doesn't know what to do!!!")
                 exit(1)
