@@ -668,7 +668,7 @@ class Game:
             best_move = None
             for move in self.move_candidates():
                 new_game = self.clone()  # similate game with possible move
-                # new_game.next_turn
+                new_game.next_turn()
                 new_game.perform_move(move)
                 score, _, = new_game.minimax(Player.Attacker, current_depth + 1)
                 if score < min_score:
