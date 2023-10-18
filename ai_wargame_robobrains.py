@@ -625,6 +625,8 @@ class Game:
                 move.dst = dst
                 if self.is_valid_move(move):
                     yield move.clone()
+                else:
+                    self.perform_move(move)
             move.dst = src
             yield move.clone()
 
@@ -648,15 +650,16 @@ class Game:
         if self.options.max_depth == current_depth or self.is_finished():
             return self.chosen_heuristic(), None
 
+        best_move = None
 # max
         if maximizing_player is Player.Attacker:
             max_score = float("-inf")
-            best_move = None
             for move in self.move_candidates():
                 new_game = self.clone()  # similate game with possible move
-                new_game.next_turn()
                 new_game.perform_move(move)
-                score, _, = new_game.minimax(Player.Defender, current_depth + 1)
+                new_game.next_turn()
+                score, _, = new_game.minimax(
+                    Player.Defender, current_depth + 1)
                 if score > max_score:
                     max_score = score
                     best_move = move
@@ -665,12 +668,12 @@ class Game:
 # min
         else:
             min_score = float("inf")
-            best_move = None
             for move in self.move_candidates():
                 new_game = self.clone()  # similate game with possible move
-                new_game.next_turn()
                 new_game.perform_move(move)
-                score, _, = new_game.minimax(Player.Attacker, current_depth + 1)
+                new_game.next_turn()
+                score, _, = new_game.minimax(
+                    Player.Attacker, current_depth + 1)
                 if score < min_score:
                     min_score = score
                     best_move = move
@@ -688,7 +691,7 @@ class Game:
             return self.heuristicE2()
         else:
             return self.heuristicE0()
-    
+
     def heuristicE1(self):
         score = 0
 
@@ -756,30 +759,30 @@ class Game:
             # print("____________________________________________ \n \n")
 
             # human vs human
-            if(self.options.game_type == GameType.AttackerVsDefender):
+            if (self.options.game_type == GameType.AttackerVsDefender):
                 f.write(f"Turn number: {self.turns_played + 1}/{self.options.max_turns} \n" +
                         f"Player: {self.next_player.name} \n" +
                         f"Action: {src} to {dest} \n" +
                         "New configuration of the board: \n" +
                         self.draw_board() + "\n"
                         )
-                
+
                 # print(f"Turn number: {self.turns_played + 1}/{self.options.max_turns} \n" +
                 #         f"Player: {self.next_player.name} \n" +
                 #         f"Action: {src} to {dest} \n" +
                 #         "New configuration of the board: \n" +
                 #         self.draw_board() + "\n"
                 #         )
-            
+
             # attacker vs computer
-            if(self.options.game_type == GameType.AttackerVsComp):
-                if(self.next_player != Player.Defender):
+            if (self.options.game_type == GameType.AttackerVsComp):
+                if (self.next_player != Player.Defender):
                     f.write(f"Turn number: {self.turns_played + 1}/{self.options.max_turns} \n" +
                             f"Player: {self.next_player.name} \n" +
                             f"Action: {src} to {dest} \n" +
                             self.draw_board() + "\n"
-                        )
-                    
+                            )
+
                     # print(f"Turn number: {self.turns_played + 1}/{self.options.max_turns} \n" +
                     #       f"Player: {self.next_player.name} \n" +
                     #       f"Action: {src} to {dest} \n" +
@@ -795,7 +798,7 @@ class Game:
                             "New configuration of the board: \n" +
                             self.draw_board() + "\n"
                             )
-                    
+
                     # print(f"Turn number: {self.turns_played + 1}/{self.options.max_turns} \n" +
                     #         f"Player: {self.next_player.name} \n" +
                     #         f"Action: {src} to {dest} \n" +
@@ -804,10 +807,10 @@ class Game:
                     #         "New configuration of the board: \n" +
                     #         self.draw_board() + "\n"
                     #         )
-            
+
             # computer vs defender
-            if(self.options.game_type == GameType.CompVsDefender):
-                if(self.next_player != Player.Defender):
+            if (self.options.game_type == GameType.CompVsDefender):
+                if (self.next_player != Player.Defender):
                     # computer turn
                     f.write(f"Turn number: {self.turns_played + 1}/{self.options.max_turns} \n" +
                             f"Player: {self.next_player.name} \n" +
@@ -817,7 +820,7 @@ class Game:
                             "New configuration of the board: \n" +
                             self.draw_board() + "\n"
                             )
-                    
+
                     # print(f"Turn number: {self.turns_played + 1}/{self.options.max_turns} \n" +
                     #         f"Player: {self.next_player.name} \n" +
                     #         f"Action: {src} to {dest} \n" +
@@ -826,31 +829,31 @@ class Game:
                     #         "New configuration of the board: \n" +
                     #         self.draw_board() + "\n"
                     #         )
-            
+
                 else:
-                   f.write(f"Turn number: {self.turns_played + 1}/{self.options.max_turns} \n" +
+                    f.write(f"Turn number: {self.turns_played + 1}/{self.options.max_turns} \n" +
                             f"Player: {self.next_player.name} \n" +
                             f"Action: {src} to {dest} \n" +
                             self.draw_board() + "\n"
                             )
-                   
+
                 #    print(f"Turn number: {self.turns_played + 1}/{self.options.max_turns} \n" +
                 #             f"Player: {self.next_player.name} \n" +
                 #             f"Action: {src} to {dest} \n" +
                 #             self.draw_board() + "\n"
                 #             )
-                   
+
             # computer vs computer
-            if(self.options.game_type == GameType.CompVsComp):
+            if (self.options.game_type == GameType.CompVsComp):
                 f.write(f"Turn number: {self.turns_played + 1}/{self.options.max_turns} \n" +
-                            f"Player: {self.next_player.name} \n" +
-                            f"Action: {src} to {dest} \n" +
-                            "AI time for action: {}\n".format("TODO") +
-                            f"AI heuristic score: {self.heuristic_score}\n \n" +
-                            "New configuration of the board: \n" +
-                            self.draw_board() + "\n"
-                            )
-                
+                        f"Player: {self.next_player.name} \n" +
+                        f"Action: {src} to {dest} \n" +
+                        "AI time for action: {}\n".format("TODO") +
+                        f"AI heuristic score: {self.heuristic_score}\n \n" +
+                        "New configuration of the board: \n" +
+                        self.draw_board() + "\n"
+                        )
+
                 # print(f"Turn number: {self.turns_played + 1}/{self.options.max_turns} \n" +
                 #             f"Player: {self.next_player.name} \n" +
                 #             f"Action: {src} to {dest} \n" +
@@ -859,7 +862,6 @@ class Game:
                 #             "New configuration of the board: \n" +
                 #             self.draw_board() + "\n"
                 #             )
-               
 
 
 ##############################################################################################################
