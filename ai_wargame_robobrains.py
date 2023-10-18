@@ -642,16 +642,58 @@ class Game:
     def suggest_move(self):
 
         # Call minimax with start_time and time_limit parameters
-        score, best_move = self.minimax(self.next_player, 0)
+        # score, best_move = self.minimax(self.next_player, 0)
+        if (self.options.alpha_beta):
+            score, best_move = self.alpha_beta(
+                MIN_HEURISTIC_SCORE, MAX_HEURISTIC_SCORE, self.next_player, 0)
+
         # Return the best move
         return best_move
+
+    def alpha_beta(self, alpha, beta, maximizing_player, current_depth):
+        if self.options.max_depth == current_depth or self.is_finished():
+            return self.chosen_heuristic(), None
+
+        best_move = None
+
+        if maximizing_player is Player.Attacker:
+            max_score = float("-inf")
+            for move in self.move_candidates():
+                new_game = self.clone()  # similate game with possible move
+                new_game.perform_move(move)
+                new_game.next_turn()
+                score, _, = new_game.alpha_beta(
+                    alpha, beta, Player.Defender, current_depth + 1)
+                if score > max_score:
+                    max_score = score
+                    best_move = move
+                alpha = max(alpha, max_score)
+                if beta <= alpha:
+                    break  # Alpha-beta pruning
+            return max_score, best_move
+
+        else:
+            min_score = float("inf")
+            for move in self.move_candidates():
+                new_game = self.clone()  # similate game with possible move
+                new_game.perform_move(move)
+                new_game.next_turn()
+                score, _, = new_game.alpha_beta(
+                    alpha, beta, Player.Attacker, current_depth + 1)
+                if score < min_score:
+                    min_score = score
+                    best_move = move
+                beta = min(beta, min_score)
+                if beta <= alpha:
+                    break  # Alpha-beta pruning
+            return min_score, best_move
 
     def minimax(self, maximizing_player, current_depth):
         if self.options.max_depth == current_depth or self.is_finished():
             return self.chosen_heuristic(), None
 
         best_move = None
-# max
+
         if maximizing_player is Player.Attacker:
             max_score = float("-inf")
             for move in self.move_candidates():
@@ -665,7 +707,6 @@ class Game:
                     best_move = move
             return max_score, best_move
 
-# min
         else:
             min_score = float("inf")
             for move in self.move_candidates():
