@@ -338,8 +338,10 @@ class Game:
             if unit.type == UnitType.AI:
                 if unit.player == Player.Attacker:
                     self._attacker_has_ai = False
+                    self.numOfAIAttacker = 0
                 else:
                     self._defender_has_ai = False
+                    self.numOfAIDefender = 0
 
             # Program
             if unit.type == UnitType.Program:
@@ -634,14 +636,14 @@ class Game:
     def suggest_move(self):
 
         # Call minimax with start_time and time_limit parameters
-        score, best_move, evals_per_depth = self.minimax(
+        score, best_move = self.minimax(
             self.next_player, 0)
         # Return the best move
         return best_move
 
     def minimax(self, maximizing_player, current_depth):
         if self.options.max_depth == current_depth or self.is_finished():
-            return self.chosen_heuristic(), None, current_depth
+            return self.chosen_heuristic(), None
 
 # max
         if maximizing_player is Player.Attacker:
@@ -651,8 +653,7 @@ class Game:
                 new_game = self.clone()  # similate game with possible move
                 new_game.next_turn()
                 new_game.perform_move(move)
-                score, _, avg_depth = new_game.minimax(
-                    Player.Defender, current_depth + 1)
+                score, _, = new_game.minimax(Player.Defender, current_depth + 1)
                 if score > max_score:
                     max_score = score
                     best_move = move
@@ -666,12 +667,11 @@ class Game:
                 new_game = self.clone()  # similate game with possible move
                 new_game.next_turn
                 new_game.perform_move(move)
-                score, _, avg_depth = new_game.minimax(
-                    Player.Attacker, current_depth + 1)
+                score, _, = new_game.minimax(Player.Attacker, current_depth + 1)
                 if score < min_score:
                     min_score = score
                     best_move = move
-            return min_score, best_move, (current_depth + avg_depth) / 2
+            return min_score, best_move
 
     def heuristicE0(self):
 
