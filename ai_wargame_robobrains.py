@@ -625,12 +625,54 @@ class Game:
             move.src = src
             for dst in src.iter_adjacent():
                 move.dst = dst
-                if self.is_valid_move(move):
+                if self.is_valid_move(move) or self.is_valid_perform(move):
                     yield move.clone()
-                else:
-                    self.perform_move(move)
             move.dst = src
             yield move.clone()
+
+    def is_valid_perform(self, coords: CoordPair) -> bool:
+        """simulation: Validate and perform a move expressed as a CoordPair. TODO: WRITE MISSING CODE!!!"""
+
+        # validate if my unit can move: if can't, could attack/repair/self-destruct or is invalid move
+        if self.is_valid_move(coords):
+            return (True)
+
+        unit = self.get(coords.src)
+        unitDst = self.get(coords.dst)
+
+        if unit is None or unit.player != self.next_player:
+            return (False)
+
+        # self-destruct
+        if coords.src == coords.dst:
+            return (True)
+
+        # get coordinates of adversial unit
+        unitAdversarialUp = self.get(
+            Coord(coords.src.row-1, coords.src.col))
+        unitAdversarialDown = self.get(
+            Coord(coords.src.row+1, coords.src.col))
+        unitAdversarialRight = self.get(
+            Coord(coords.src.row, coords.src.col+1))
+        unitAdversarialLeft = self.get(
+            Coord(coords.src.row, coords.src.col-1))
+
+        if self.can_attack_or_repair(unitAdversarialUp, unit, unitDst, coords) or self.can_attack_or_repair(unitAdversarialDown, unit, unitDst, coords) or self.can_attack_or_repair(unitAdversarialLeft, unit, unitDst, coords) or self.can_attack_or_repair(unitAdversarialRight, unit, unitDst, coords):
+            return (True)
+        return (False)
+
+    def can_attack_or_repair(self, adjacentUnit, srcUnit, destUnit: Unit, coords: CoordPair) -> bool:
+        if adjacentUnit is not None:
+            # not same team & dst move is where opponent located at -> attack
+            if adjacentUnit.player != srcUnit.player and destUnit == adjacentUnit:
+                return True
+            # same team & dst move is where friendly unit located at -> repair
+            elif adjacentUnit.player == srcUnit.player and destUnit == adjacentUnit and ((srcUnit.type == UnitType.AI and (adjacentUnit.type == UnitType.Virus or adjacentUnit.type == UnitType.Tech)) or (srcUnit.type == UnitType.Tech and (adjacentUnit.type == UnitType.AI or adjacentUnit.type == UnitType.Firewall or adjacentUnit.type == UnitType.Program))):
+                if 0 < srcUnit.repair_amount(destUnit) and srcUnit.repair_amount(destUnit) < 9:
+                    return True
+                else:
+                    return False
+        return False
 
     def random_move(self) -> Tuple[int, CoordPair | None, float]:
         """Returns a random move."""
