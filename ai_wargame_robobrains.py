@@ -456,7 +456,7 @@ class Game:
             self.mod_health(Coord(coords.src.row, coords.src.col-1), -2)
             self.mod_health(Coord(coords.src.row-1, coords.src.col-1), -2)
 
-            self.trace_each_action(coords.src, coords.dst)
+            # self.trace_each_action(coords.src, coords.dst)
             return (True, "")
 
         # get coordinates of adversial unit
@@ -470,7 +470,7 @@ class Game:
             Coord(coords.src.row, coords.src.col-1))
 
         if self.has_attacked_or_repaired(unitAdversarialUp, unit, unitDst, coords) or self.has_attacked_or_repaired(unitAdversarialDown, unit, unitDst, coords) or self.has_attacked_or_repaired(unitAdversarialLeft, unit, unitDst, coords) or self.has_attacked_or_repaired(unitAdversarialRight, unit, unitDst, coords):
-            self.trace_each_action(coords.src, coords.dst)
+            # self.trace_each_action(coords.src, coords.dst)
             return (True, "")
 
         return (False, "invalid move")
@@ -562,6 +562,7 @@ class Game:
                 if mv is not None:
                     (success, result) = self.perform_move(mv)
                     print(f"Broker {self.next_player.name}: ", end='')
+                    self.trace_each_action(mv.src, mv.dst)
                     print(result)
                     if success:
                         self.next_turn()
@@ -573,6 +574,7 @@ class Game:
                 (success, result) = self.perform_move(mv)
                 if success:
                     print(f"Player {self.next_player.name}: ", end='')
+                    self.trace_each_action(mv.src, mv.dst)
                     print(result)
                     self.next_turn()
                     break
@@ -586,6 +588,8 @@ class Game:
             (success, result) = self.perform_move(mv)
             if success:
                 print(f"Computer {self.next_player.name}: ", end='')
+                self.trace_each_action(mv.src, mv.dst)
+                print(f"")
                 print(result)
                 self.next_turn()
         return mv
@@ -636,8 +640,7 @@ class Game:
     def suggest_move(self):
 
         # Call minimax with start_time and time_limit parameters
-        score, best_move = self.minimax(
-            self.next_player, 0)
+        score, best_move = self.minimax(self.next_player, 0)
         # Return the best move
         return best_move
 
@@ -665,7 +668,7 @@ class Game:
             best_move = None
             for move in self.move_candidates():
                 new_game = self.clone()  # similate game with possible move
-                new_game.next_turn
+                # new_game.next_turn
                 new_game.perform_move(move)
                 score, _, = new_game.minimax(Player.Attacker, current_depth + 1)
                 if score < min_score:
@@ -674,7 +677,6 @@ class Game:
             return min_score, best_move
 
     def heuristicE0(self):
-
         return ((3 * self.numOfVirusesAttacker) + (0) + (3 * self.numOfFirewallAttacker) + (3 * self.numOfProgramsAttacker) + (9999 * self.numOfAIAttacker)) - ((0) + (3 * self.numOfTechsDefender) + (3 * self.numOfFirewallDefender) + (3 * self.numOfProgramsDefender) + (9999 * self.numOfAIDefender))
 
     def chosen_heuristic(self):
@@ -751,16 +753,23 @@ class Game:
     def trace_each_action(self, src, dest):
         with open(self.gameTrace_path, 'a') as f:
             f.write("____________________________________________ \n \n")
+            # print("____________________________________________ \n \n")
+
             # human vs human
             if(self.options.game_type == GameType.AttackerVsDefender):
                 f.write(f"Turn number: {self.turns_played + 1}/{self.options.max_turns} \n" +
                         f"Player: {self.next_player.name} \n" +
                         f"Action: {src} to {dest} \n" +
-                        "AI time for action: {}\n".format("TODO") +
-                        f"AI heuristic score: {self.heuristic_score}\n \n" +
                         "New configuration of the board: \n" +
                         self.draw_board() + "\n"
                         )
+                
+                # print(f"Turn number: {self.turns_played + 1}/{self.options.max_turns} \n" +
+                #         f"Player: {self.next_player.name} \n" +
+                #         f"Action: {src} to {dest} \n" +
+                #         "New configuration of the board: \n" +
+                #         self.draw_board() + "\n"
+                #         )
             
             # attacker vs computer
             if(self.options.game_type == GameType.AttackerVsComp):
@@ -769,7 +778,13 @@ class Game:
                             f"Player: {self.next_player.name} \n" +
                             f"Action: {src} to {dest} \n" +
                             self.draw_board() + "\n"
-                            )
+                        )
+                    
+                    # print(f"Turn number: {self.turns_played + 1}/{self.options.max_turns} \n" +
+                    #       f"Player: {self.next_player.name} \n" +
+                    #       f"Action: {src} to {dest} \n" +
+                    #       self.draw_board() + "\n"
+                    #     )
                 else:
                     # computer turn
                     f.write(f"Turn number: {self.turns_played + 1}/{self.options.max_turns} \n" +
@@ -780,6 +795,15 @@ class Game:
                             "New configuration of the board: \n" +
                             self.draw_board() + "\n"
                             )
+                    
+                    # print(f"Turn number: {self.turns_played + 1}/{self.options.max_turns} \n" +
+                    #         f"Player: {self.next_player.name} \n" +
+                    #         f"Action: {src} to {dest} \n" +
+                    #         "AI time for action: {}\n".format("TODO") +
+                    #         f"AI heuristic score: {self.heuristic_score}\n \n" +
+                    #         "New configuration of the board: \n" +
+                    #         self.draw_board() + "\n"
+                    #         )
             
             # computer vs defender
             if(self.options.game_type == GameType.CompVsDefender):
@@ -793,6 +817,15 @@ class Game:
                             "New configuration of the board: \n" +
                             self.draw_board() + "\n"
                             )
+                    
+                    # print(f"Turn number: {self.turns_played + 1}/{self.options.max_turns} \n" +
+                    #         f"Player: {self.next_player.name} \n" +
+                    #         f"Action: {src} to {dest} \n" +
+                    #         "AI time for action: {}\n".format("TODO") +
+                    #         f"AI heuristic score: {self.heuristic_score}\n \n" +
+                    #         "New configuration of the board: \n" +
+                    #         self.draw_board() + "\n"
+                    #         )
             
                 else:
                    f.write(f"Turn number: {self.turns_played + 1}/{self.options.max_turns} \n" +
@@ -800,6 +833,12 @@ class Game:
                             f"Action: {src} to {dest} \n" +
                             self.draw_board() + "\n"
                             )
+                   
+                #    print(f"Turn number: {self.turns_played + 1}/{self.options.max_turns} \n" +
+                #             f"Player: {self.next_player.name} \n" +
+                #             f"Action: {src} to {dest} \n" +
+                #             self.draw_board() + "\n"
+                #             )
                    
             # computer vs computer
             if(self.options.game_type == GameType.CompVsComp):
@@ -811,6 +850,15 @@ class Game:
                             "New configuration of the board: \n" +
                             self.draw_board() + "\n"
                             )
+                
+                # print(f"Turn number: {self.turns_played + 1}/{self.options.max_turns} \n" +
+                #             f"Player: {self.next_player.name} \n" +
+                #             f"Action: {src} to {dest} \n" +
+                #             "AI time for action: {}\n".format("TODO") +
+                #             f"AI heuristic score: {self.heuristic_score}\n \n" +
+                #             "New configuration of the board: \n" +
+                #             self.draw_board() + "\n"
+                #             )
                
 
 
