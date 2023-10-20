@@ -728,7 +728,7 @@ class Game:
         if self.options.max_depth == current_depth or self.is_finished():
             self.stats.evaluations_per_depth[current_depth] += 1
             # print("No children")
-            return self.chosen_heuristic(), None
+            return self.custom_heuristic(), None
 
         best_move = None
         self.stats.evaluations_per_depth[current_depth+1] += 1
@@ -792,11 +792,6 @@ class Game:
           + 9999 * (self.numOfAIAttacker - self.numOfAIDefender)))
 
     def heuristicE1(self):
-        score = 0
-
-        return score
-
-    def heuristicE2(self):
         attackerScore=0
         defenderScore=0
 
@@ -845,6 +840,54 @@ class Game:
                 defenderScore += centralWeight
             
         return attackerScore - defenderScore
+
+    def heuristicE2(self):
+        score = 0
+
+        coordDefenderAI_row = 0
+        coordDefenderAI_col = 0
+        coordAttackerAI_row = 0
+        coordAttackerAI_col = 0
+
+        # Find defender AI coord
+        for (coord, unit) in self.player_units(Player.Attacker):
+            if unit.type == UnitType.AI:
+                coordDefenderAI_row = coord.row
+                coordDefenderAI_col = coord.col
+
+        # Find attacker AI coord
+        for (coord, unit) in self.player_units(Player.Defender):
+            if unit.type == UnitType.AI:
+                coordAttackerAI_row = coord.row
+                coordAttackerAI_col = coord.col
+
+        for (coord, unit) in self.player_units(Player.Attacker):
+            if unit.is_alive():
+                if (unit.type == UnitType.Virus):
+                    score += unit.health * 7
+                elif (unit.type == UnitType.Firewall):
+                    score += unit.health * 1
+                elif (unit.type == UnitType.Program):
+                    score += unit.health * 2
+                elif (unit.type == UnitType.AI):
+                    score += unit.health * 20
+                
+                score += abs(coord.row - coordDefenderAI_row) + abs(coord.col - coordDefenderAI_col)
+        
+        for (coord, unit) in self.player_units(Player.Defender):
+            if unit.is_alive():
+                if (unit.type == UnitType.Tech):
+                    score -= unit.health * 6
+                elif (unit.type == UnitType.Firewall):
+                    score -= unit.health * 1
+                elif (unit.type == UnitType.Program):
+                    score -= unit.health * 2
+                elif (unit.type == UnitType.AI):
+                    score -= unit.health * 20
+
+                score -= (abs(coord.row - coordAttackerAI_row) + abs(coord.col - coordAttackerAI_col))
+
+        return score
 
     def post_move_to_broker(self, move: CoordPair):
         """Send a move to the game broker."""
@@ -988,7 +1031,6 @@ def main():
     )
 
     if(options.game_type == GameType.AttackerVsComp) or (options.game_type == GameType.CompVsDefender) or (options.game_type == GameType.CompVsComp):
-        
         for i in range(1, game.options.max_depth + 1):
             game.stats.evaluations_per_depth[i] = 0
        
