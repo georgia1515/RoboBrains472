@@ -833,14 +833,10 @@ class Game:
             elif (unit.type == UnitType.AI):
                 attackerScore += weights['ai_attacker']
                 attackerScore += unit.health * 20
-            
-            # Bonus for center control
-            if coord in center_tiles:
-                attackerScore += centralWeight
 
-            # Add health ratio if health attribute is available
-            # if hasattr(unit, 'health') and hasattr(unit, 'max_health'):
-            #     attackerScore += (unit.health / unit.max_health) * weights['health_ratio_weight']
+            # Bonus for center control
+            if coord.to_string() in center_tiles:
+                attackerScore += centralWeight
 
         # Scoring for Defender Units, based on weight, center control, and health
         for (coord, unit) in self.player_units(Player.Defender):
@@ -858,7 +854,7 @@ class Game:
                 defenderScore += unit.health * 20
 
             # Bonus for center control
-            if coord in center_tiles:
+            if coord.to_string() in center_tiles:
                 attackerScore += centralWeight
             
         return attackerScore - defenderScore
