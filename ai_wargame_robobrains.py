@@ -1009,9 +1009,9 @@ def main():
                 game.post_move_to_broker(move)
             elif move is None:
                 if player == Player.Attacker:
-                    print("Attacker has lost!")
+                    print("Defender has won")
                 else:
-                    print("Defender has lost!")
+                    print("Attacker has won")
                 break
             else:
                 print("Computer doesn't know what to do!!!")
