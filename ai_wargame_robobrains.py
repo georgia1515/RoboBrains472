@@ -803,59 +803,46 @@ class Game:
         # adding weight to the score if positions are towards the center of the board
         centralWeight = 25
 
-        # These weights can be adjusted based on the importance you assign
-        weights = {
-            'viruses_attacker': 10,
-            'firewall_attacker': 2,
-            'programs_attacker': 5,
-            'ai_attacker': 9999,
-            'techs_defender': 9,
-            'firewall_defender': 2,
-            'programs_defender': 5,
-            'ai_defender': 9999,
-            # 'health_ratio_weight': 0.5  # Weight for unit's health ratio
-        }
-
-        # Assuming an 8x8 board for the center tiles
+        # central tiles
         center_tiles = ['C2', 'D2', 'C3', 'B2', 'C1']
 
-        # Scoring for Attacker units, based on weight, center control, and health
+        # score for Attacker units, based on weight, health, and center control
         for (coord, unit) in self.player_units(Player.Attacker):
             if (unit.type == UnitType.Virus):
-                attackerScore += weights['viruses_attacker']
+                attackerScore += 10
                 attackerScore += unit.health * 7
             elif (unit.type == UnitType.Firewall):
-                attackerScore += weights['firewall_attacker']
+                attackerScore += 2
                 attackerScore += unit.health * 1
             elif (unit.type == UnitType.Program):
-                attackerScore += weights['programs_attacker']
+                attackerScore += 5
                 attackerScore += unit.health * 2
             elif (unit.type == UnitType.AI):
-                attackerScore += weights['ai_attacker']
+                attackerScore += 9999
                 attackerScore += unit.health * 20
 
-            # Bonus for center control
+            # adds to score if player is controlling center
             if coord.to_string() in center_tiles:
                 attackerScore += centralWeight
 
-        # Scoring for Defender Units, based on weight, center control, and health
+        # score for Defender Units, based on weight, health, and center control
         for (coord, unit) in self.player_units(Player.Defender):
             if (unit.type == UnitType.Tech):
-                defenderScore += weights['techs_defender']
+                defenderScore += 9
                 defenderScore += unit.health * 6
             elif (unit.type == UnitType.Firewall):
-                defenderScore += weights['firewall_defender']
+                defenderScore += 2
                 defenderScore += unit.health * 1
             elif (unit.type == UnitType.Program):
-                defenderScore += weights['programs_defender']
+                defenderScore += 5
                 defenderScore += unit.health * 2
             elif (unit.type == UnitType.AI):
-                defenderScore += weights['ai_defender']
+                defenderScore += 9999
                 defenderScore += unit.health * 20
 
-            # Bonus for center control
+            # adds to score if player is controlling center
             if coord.to_string() in center_tiles:
-                attackerScore += centralWeight
+                defenderScore += centralWeight
             
         return attackerScore - defenderScore
 
