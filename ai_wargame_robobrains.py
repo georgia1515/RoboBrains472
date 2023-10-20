@@ -797,9 +797,71 @@ class Game:
         return score
 
     def heuristicE2(self):
-        score = 0
+        attackerScore=0
+        defenderScore=0
 
-        return score
+        # adding weight to the score if positions are towards the center of the board
+        centralWeight = 25
+
+        # These weights can be adjusted based on the importance you assign
+        weights = {
+            'viruses_attacker': 10,
+            'firewall_attacker': 2,
+            'programs_attacker': 5,
+            'ai_attacker': 9999,
+            'techs_defender': 9,
+            'firewall_defender': 2,
+            'programs_defender': 5,
+            'ai_defender': 9999,
+            # 'health_ratio_weight': 0.5  # Weight for unit's health ratio
+        }
+
+        # Assuming an 8x8 board for the center tiles
+        center_tiles = ['C2', 'D2', 'C3', 'B2', 'C1']
+
+        # Scoring for Attacker units, based on weight, center control, and health
+        for (coord, unit) in self.player_units(Player.Attacker):
+            if (unit.type == UnitType.Virus):
+                attackerScore += weights['viruses_attacker']
+                attackerScore += unit.health * 7
+            elif (unit.type == UnitType.Firewall):
+                attackerScore += weights['firewall_attacker']
+                attackerScore += unit.health * 1
+            elif (unit.type == UnitType.Program):
+                attackerScore += weights['programs_attacker']
+                attackerScore += unit.health * 2
+            elif (unit.type == UnitType.AI):
+                attackerScore += weights['ai_attacker']
+                attackerScore += unit.health * 20
+            
+            # Bonus for center control
+            if coord in center_tiles:
+                attackerScore += centralWeight
+
+            # Add health ratio if health attribute is available
+            # if hasattr(unit, 'health') and hasattr(unit, 'max_health'):
+            #     attackerScore += (unit.health / unit.max_health) * weights['health_ratio_weight']
+
+        # Scoring for Defender Units, based on weight, center control, and health
+        for (coord, unit) in self.player_units(Player.Defender):
+            if (unit.type == UnitType.Tech):
+                defenderScore += weights['techs_defender']
+                defenderScore += unit.health * 6
+            elif (unit.type == UnitType.Firewall):
+                defenderScore += weights['firewall_defender']
+                defenderScore += unit.health * 1
+            elif (unit.type == UnitType.Program):
+                defenderScore += weights['programs_defender']
+                defenderScore += unit.health * 2
+            elif (unit.type == UnitType.AI):
+                defenderScore += weights['ai_defender']
+                defenderScore += unit.health * 20
+
+            # Bonus for center control
+            if coord in center_tiles:
+                attackerScore += centralWeight
+            
+        return attackerScore - defenderScore
 
     def post_move_to_broker(self, move: CoordPair):
         """Send a move to the game broker."""
