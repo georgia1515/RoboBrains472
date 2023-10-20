@@ -251,7 +251,7 @@ class Stats:
     total_time: float = 0.0
     elapsed_time: float = 0.0
     evaluations_per_depth: dict[int, int] = field(default_factory=dict) # to get cumulative evals => sum(evaluations_per_depth.values())
-
+    avg_branching_factor: float = 0.0
 
 ##############################################################################################################
 # GAME MOVES
@@ -692,57 +692,57 @@ class Game:
 
     def suggest_move(self):
         start_time = datetime.now()
+        branchingFactor = []
 
         if (self.options.alpha_beta):
             score, best_move = self.alpha_beta_minimax(
-                MIN_HEURISTIC_SCORE, MAX_HEURISTIC_SCORE, self.next_player, 0)
+                MIN_HEURISTIC_SCORE, MAX_HEURISTIC_SCORE, self.next_player, 0, branchingFactor)
         else:
-            score, best_move = self.alpha_beta_minimax(None, None, self.next_player, 0)
-
-        print((3 * (self.numOfVirusesAttacker - self.numOfTechsDefender)
-          + 3 * (self.numOfFirewallAttacker - self.numOfFirewallDefender)
-          + 3 * (self.numOfProgramsAttacker - self.numOfProgramsDefender)
-          + 9999 * (self.numOfAIAttacker - self.numOfAIDefender)))
-
+            score, best_move = self.alpha_beta_minimax(None, None, self.next_player, 0, branchingFactor)
+        
+        self.heuristic_score = score
         self.stats.elapsed_time = (datetime.now() - start_time).total_seconds()
         self.stats.total_time += self.stats.elapsed_time
+        self.stats.avg_branching_factor = round(sum(branchingFactor)/len(branchingFactor), 2)
+        total_evals = sum(self.stats.evaluations_per_depth.values())
+        print(f"Elapsed time: {self.stats.elapsed_time :0.1f}s")
         print(f"Heuristic score: {self.heuristic_score}")
+        print(f"Total evaluations: {total_evals}")
         print(f"Evals per depth: ",end='')
         for k in sorted(self.stats.evaluations_per_depth.keys()):
             print(f"{k}:{self.stats.evaluations_per_depth[k]} ",end='')
         print()
         print(f"Cumulative % evals by depth: ", end='')
         for k in sorted(self.stats.evaluations_per_depth.keys()):
-            print(f"{k}:{self.stats.evaluations_per_depth[k]/sum(self.stats.evaluations_per_depth.values())*100:0.1f}% ",end='')
+            print(f"{k}-{self.stats.evaluations_per_depth[k]/sum(self.stats.evaluations_per_depth.values())*100:0.1f}% ",end='')
         print()
-        total_evals = sum(self.stats.evaluations_per_depth.values())
-        print(f"Total evaluations: {total_evals}")
 
-        # if self.stats.total_time > 0:
-        #     print(f"Eval perf.: {total_evals/self.stats.total_time/1000:0.1f}k/s")
-        print(f"Elapsed time: {self.stats.elapsed_time :0.1f}s")
+        if self.stats.total_time > 0:
+            print(f"Eval perf.: {total_evals/self.stats.total_time/1000:0.1f}k/s")
+        print(f"Branching factor: {self.stats.avg_branching_factor}")
 
-
-        self.heuristic_score = score
         # Return the best move
         return best_move
     
-    def alpha_beta_minimax(self, alpha, beta, maximizing_player, current_depth):
+    def alpha_beta_minimax(self, alpha, beta, maximizing_player, current_depth, branchingFactor):
         if self.options.max_depth == current_depth or self.is_finished():
             self.stats.evaluations_per_depth[current_depth] += 1
+            # print("No children")
             return self.chosen_heuristic(), None
 
         best_move = None
         self.stats.evaluations_per_depth[current_depth+1] += 1
+        numOfChildrens = 0
 
         if maximizing_player is Player.Attacker:
             max_score = float("-inf")
             for move in self.move_candidates():
-                new_game = self.clone()  # similate game with possible move
+                numOfChildrens += 1
+                new_game = self.clone()
                 new_game.perform_move(move)
                 new_game.next_turn()
                 score, _, = new_game.alpha_beta_minimax(
-                    alpha, beta, Player.Defender, current_depth + 1)
+                    alpha, beta, Player.Defender, current_depth + 1, branchingFactor)
                 if score > max_score:
                     max_score = score
                     best_move = move
@@ -750,16 +750,19 @@ class Game:
                     alpha = max(alpha, max_score)
                     if beta <= alpha:
                         break  # Alpha-beta pruning
+            # print(f"Number of children: {numOfChildrens}")
+            branchingFactor.append(numOfChildrens)
             return max_score, best_move
 
         else:
             min_score = float("inf")
             for move in self.move_candidates():
-                new_game = self.clone()  # similate game with possible move
+                numOfChildrens += 1
+                new_game = self.clone()
                 new_game.perform_move(move)
                 new_game.next_turn()
                 score, _, = new_game.alpha_beta_minimax(
-                    alpha, beta, Player.Attacker, current_depth + 1)
+                    alpha, beta, Player.Attacker, current_depth + 1, branchingFactor)
                 if score < min_score:
                     min_score = score
                     best_move = move
@@ -767,6 +770,8 @@ class Game:
                     beta = min(beta, min_score)
                     if beta <= alpha:
                         break  # Alpha-beta pruning
+            # print(f"Number of children: {numOfChildrens}")
+            branchingFactor.append(numOfChildrens)
             return min_score, best_move
 
 
@@ -855,8 +860,8 @@ class Game:
             if (self.options.game_type == GameType.AttackerVsDefender) or (self.options.game_type == GameType.AttackerVsComp and self.next_player != Player.Defender) or (self.options.game_type == GameType.CompVsDefender and self.next_player != Player.Attacker):
                     f.write(f"Turn number: {self.turns_played + 1}/{self.options.max_turns} \n" +
                         f"Player: {self.next_player.name} \n" +
-                        f"Action: {src} to {dest} \n" +
-                        "New configuration of the board: \n \n" +
+                        f"Action: {src} to {dest} \n \n" +
+                        "New configuration of the board: \n" +
                         self.draw_board() + "\n"
                         )
 
@@ -866,7 +871,7 @@ class Game:
                 evalutations_by_depth_percentage = "Cumulative % evals by depth: "
                 for k in sorted(self.stats.evaluations_per_depth.keys()):
                     evaluations_by_depth += f"{k}:{self.stats.evaluations_per_depth[k]} "
-                    evalutations_by_depth_percentage += f"{k}:{self.stats.evaluations_per_depth[k]/sum(self.stats.evaluations_per_depth.values())*100:0.1f}% "
+                    evalutations_by_depth_percentage += f"{k}-{self.stats.evaluations_per_depth[k]/sum(self.stats.evaluations_per_depth.values())*100:0.1f}% "
                 f.write(f"Turn number: {self.turns_played + 1}/{self.options.max_turns} \n" +
                         f"Player: {self.next_player.name} \n" +
                         f"Action: {src} to {dest} \n" +
@@ -875,6 +880,7 @@ class Game:
                         f"Cumulative evals: {sum(self.stats.evaluations_per_depth.values())} \n" +
                         evaluations_by_depth + "\n" +
                         evalutations_by_depth_percentage + "\n" +
+                        f"Branching factor: {self.stats.avg_branching_factor} \n \n" +
                         "New configuration of the board: \n" +
                         self.draw_board() + "\n"
                         )
