@@ -900,7 +900,7 @@ def main():
                         help='maximum number of turns')
     # only minimax if alpha_beta is turned off
     parser.add_argument(
-        '--alpha_beta_off', help='alpha beta pruning turned on', action='store_false')
+        '--alpha_beta_off', help='alpha beta pruning turned off [default: on]', action='store_false')
     parser.add_argument('--max_depth', type=int, help='maximum search depth')
     parser.add_argument('--game_type', type=str, default="manual",
                         help='game type: auto|attacker|defender|manual')
