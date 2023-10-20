@@ -699,18 +699,6 @@ class Game:
         else:
             score, best_move = self.alpha_beta_minimax(None, None, self.next_player, 0)
 
-        print(score)
-        print("Attacker-------------------------------------------------------------")
-        print(self.numOfProgramsAttacker)
-        print(self.numOfFirewallAttacker)
-        print(self.numOfVirusesAttacker)
-        print(self.numOfAIAttacker)
-        print("Defender-------------------------------------------------------------")
-        print(self.numOfProgramsDefender)
-        print(self.numOfFirewallDefender)
-        print(self.numOfTechsDefender)
-        print(self.numOfAIDefender)
-        print("-------------------------------------------------------------")
         print((3 * (self.numOfVirusesAttacker - self.numOfTechsDefender)
           + 3 * (self.numOfFirewallAttacker - self.numOfFirewallDefender)
           + 3 * (self.numOfProgramsAttacker - self.numOfProgramsDefender)

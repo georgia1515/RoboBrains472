@@ -1,0 +1,841 @@
+GAME TRACE 
+ 
+Game parameters: 
+	Timeout time (s): 5.0
+	Max number of turns: 100
+	Alpha-beta (T/F): True
+	Play modes: CompVsComp
+	Heuristic: 0
+ 
+INITIAL CONFIGURATION OF THE BOARD 
+Next player: Attacker
+Turns played: 0/100
+
+    0   1   2   3   4  
+A: dA9 dT9 dF9  .   .  
+B: dT9 dP9  .   .   .  
+C: dF9  .   .   .  aP9 
+D:  .   .   .  aF9 aV9 
+E:  .   .  aP9 aV9 aA9 
+
+____________________________________________ 
+ 
+Turn number: 1/100 
+Player: Attacker 
+Action: C4 to B4 
+AI time for action: 0.1s 
+AI heuristic score: 0
+ 
+Cumulative evals: 753 
+Cumulative evals by depth: 1:2 2:22 3:43 4:686 
+Cumulative % evals by depth: 1:0.3% 2:2.9% 3:5.7% 4:91.1% 
+New configuration of the board: 
+    0   1   2   3   4  
+A: dA9 dT9 dF9  .   .  
+B: dT9 dP9  .   .  aP9 
+C: dF9  .   .   .   .  
+D:  .   .   .  aF9 aV9 
+E:  .   .  aP9 aV9 aA9 
+
+____________________________________________ 
+ 
+Turn number: 2/100 
+Player: Defender 
+Action: A2 to B2 
+AI time for action: 0.1s 
+AI heuristic score: 0
+ 
+Cumulative evals: 1434 
+Cumulative evals by depth: 1:4 2:35 3:98 4:1297 
+Cumulative % evals by depth: 1:0.3% 2:2.4% 3:6.8% 4:90.4% 
+New configuration of the board: 
+    0   1   2   3   4  
+A: dA9 dT9  .   .   .  
+B: dT9 dP9 dF9  .  aP9 
+C: dF9  .   .   .   .  
+D:  .   .   .  aF9 aV9 
+E:  .   .  aP9 aV9 aA9 
+
+____________________________________________ 
+ 
+Turn number: 3/100 
+Player: Attacker 
+Action: B4 to A4 
+AI time for action: 0.1s 
+AI heuristic score: 0
+ 
+Cumulative evals: 1945 
+Cumulative evals by depth: 1:6 2:59 3:132 4:1748 
+Cumulative % evals by depth: 1:0.3% 2:3.0% 3:6.8% 4:89.9% 
+New configuration of the board: 
+    0   1   2   3   4  
+A: dA9 dT9  .   .  aP9 
+B: dT9 dP9 dF9  .   .  
+C: dF9  .   .   .   .  
+D:  .   .   .  aF9 aV9 
+E:  .   .  aP9 aV9 aA9 
+
+____________________________________________ 
+ 
+Turn number: 4/100 
+Player: Defender 
+Action: A1 to A2 
+AI time for action: 0.1s 
+AI heuristic score: 0
+ 
+Cumulative evals: 2416 
+Cumulative evals by depth: 1:8 2:71 3:164 4:2173 
+Cumulative % evals by depth: 1:0.3% 2:2.9% 3:6.8% 4:89.9% 
+New configuration of the board: 
+    0   1   2   3   4  
+A: dA9  .  dT9  .  aP9 
+B: dT9 dP9 dF9  .   .  
+C: dF9  .   .   .   .  
+D:  .   .   .  aF9 aV9 
+E:  .   .  aP9 aV9 aA9 
+
+____________________________________________ 
+ 
+Turn number: 5/100 
+Player: Attacker 
+Action: A4 to A3 
+AI time for action: 0.1s 
+AI heuristic score: 0
+ 
+Cumulative evals: 3038 
+Cumulative evals by depth: 1:10 2:83 3:198 4:2747 
+Cumulative % evals by depth: 1:0.3% 2:2.7% 3:6.5% 4:90.4% 
+New configuration of the board: 
+    0   1   2   3   4  
+A: dA9  .  dT9 aP9  .  
+B: dT9 dP9 dF9  .   .  
+C: dF9  .   .   .   .  
+D:  .   .   .  aF9 aV9 
+E:  .   .  aP9 aV9 aA9 
+
+____________________________________________ 
+ 
+Turn number: 6/100 
+Player: Defender 
+Action: A0 to A1 
+AI time for action: 0.1s 
+AI heuristic score: 0
+ 
+Cumulative evals: 3588 
+Cumulative evals by depth: 1:12 2:97 3:243 4:3236 
+Cumulative % evals by depth: 1:0.3% 2:2.7% 3:6.8% 4:90.2% 
+New configuration of the board: 
+    0   1   2   3   4  
+A:  .  dA9 dT9 aP9  .  
+B: dT9 dP9 dF9  .   .  
+C: dF9  .   .   .   .  
+D:  .   .   .  aF9 aV9 
+E:  .   .  aP9 aV9 aA9 
+
+____________________________________________ 
+ 
+Turn number: 7/100 
+Player: Attacker 
+Action: A3 to A2 
+AI time for action: 0.1s 
+AI heuristic score: 0
+ 
+Cumulative evals: 4096 
+Cumulative evals by depth: 1:14 2:118 3:277 4:3687 
+Cumulative % evals by depth: 1:0.3% 2:2.9% 3:6.8% 4:90.0% 
+New configuration of the board: 
+    0   1   2   3   4  
+A:  .  dA9 dT6 aP8  .  
+B: dT9 dP9 dF9  .   .  
+C: dF9  .   .   .   .  
+D:  .   .   .  aF9 aV9 
+E:  .   .  aP9 aV9 aA9 
+
+____________________________________________ 
+ 
+Turn number: 8/100 
+Player: Defender 
+Action: A1 to A2 
+AI time for action: 0.1s 
+AI heuristic score: 0
+ 
+Cumulative evals: 4641 
+Cumulative evals by depth: 1:16 2:132 3:313 4:4180 
+Cumulative % evals by depth: 1:0.3% 2:2.8% 3:6.7% 4:90.1% 
+New configuration of the board: 
+    0   1   2   3   4  
+A:  .  dA9 dT7 aP8  .  
+B: dT9 dP9 dF9  .   .  
+C: dF9  .   .   .   .  
+D:  .   .   .  aF9 aV9 
+E:  .   .  aP9 aV9 aA9 
+
+____________________________________________ 
+ 
+Turn number: 9/100 
+Player: Attacker 
+Action: A3 to A2 
+AI time for action: 0.1s 
+AI heuristic score: 0
+ 
+Cumulative evals: 5132 
+Cumulative evals by depth: 1:18 2:144 3:347 4:4623 
+Cumulative % evals by depth: 1:0.4% 2:2.8% 3:6.8% 4:90.1% 
+New configuration of the board: 
+    0   1   2   3   4  
+A:  .  dA9 dT4 aP7  .  
+B: dT9 dP9 dF9  .   .  
+C: dF9  .   .   .   .  
+D:  .   .   .  aF9 aV9 
+E:  .   .  aP9 aV9 aA9 
+
+____________________________________________ 
+ 
+Turn number: 10/100 
+Player: Defender 
+Action: B2 to C2 
+AI time for action: 0.1s 
+AI heuristic score: 0
+ 
+Cumulative evals: 5817 
+Cumulative evals by depth: 1:20 2:159 3:393 4:5245 
+Cumulative % evals by depth: 1:0.3% 2:2.7% 3:6.8% 4:90.2% 
+New configuration of the board: 
+    0   1   2   3   4  
+A:  .  dA9 dT4 aP7  .  
+B: dT9 dP9  .   .   .  
+C: dF9  .  dF9  .   .  
+D:  .   .   .  aF9 aV9 
+E:  .   .  aP9 aV9 aA9 
+
+____________________________________________ 
+ 
+Turn number: 11/100 
+Player: Attacker 
+Action: A3 to A2 
+AI time for action: 0.1s 
+AI heuristic score: 0
+ 
+Cumulative evals: 6341 
+Cumulative evals by depth: 1:22 2:171 3:430 4:5718 
+Cumulative % evals by depth: 1:0.3% 2:2.7% 3:6.8% 4:90.2% 
+New configuration of the board: 
+    0   1   2   3   4  
+A:  .  dA9 dT1 aP6  .  
+B: dT9 dP9  .   .   .  
+C: dF9  .  dF9  .   .  
+D:  .   .   .  aF9 aV9 
+E:  .   .  aP9 aV9 aA9 
+
+____________________________________________ 
+ 
+Turn number: 12/100 
+Player: Defender 
+Action: A2 to B2 
+AI time for action: 0.1s 
+AI heuristic score: 0
+ 
+Cumulative evals: 7055 
+Cumulative evals by depth: 1:24 2:188 3:480 4:6363 
+Cumulative % evals by depth: 1:0.3% 2:2.7% 3:6.8% 4:90.2% 
+New configuration of the board: 
+    0   1   2   3   4  
+A:  .  dA9  .  aP6  .  
+B: dT9 dP9 dT1  .   .  
+C: dF9  .  dF9  .   .  
+D:  .   .   .  aF9 aV9 
+E:  .   .  aP9 aV9 aA9 
+
+____________________________________________ 
+ 
+Turn number: 13/100 
+Player: Attacker 
+Action: A3 to A2 
+AI time for action: 0.1s 
+AI heuristic score: 0
+ 
+Cumulative evals: 7680 
+Cumulative evals by depth: 1:26 2:200 3:515 4:6939 
+Cumulative % evals by depth: 1:0.3% 2:2.6% 3:6.7% 4:90.4% 
+New configuration of the board: 
+    0   1   2   3   4  
+A:  .  dA9 aP6  .   .  
+B: dT9 dP9 dT1  .   .  
+C: dF9  .  dF9  .   .  
+D:  .   .   .  aF9 aV9 
+E:  .   .  aP9 aV9 aA9 
+
+____________________________________________ 
+ 
+Turn number: 14/100 
+Player: Defender 
+Action: A1 to A2 
+AI time for action: 0.1s 
+AI heuristic score: 0
+ 
+Cumulative evals: 8518 
+Cumulative evals by depth: 1:28 2:215 3:569 4:7706 
+Cumulative % evals by depth: 1:0.3% 2:2.5% 3:6.7% 4:90.5% 
+New configuration of the board: 
+    0   1   2   3   4  
+A:  .  dA6 aP3  .   .  
+B: dT9 dP9 dT1  .   .  
+C: dF9  .  dF9  .   .  
+D:  .   .   .  aF9 aV9 
+E:  .   .  aP9 aV9 aA9 
+
+____________________________________________ 
+ 
+Turn number: 15/100 
+Player: Attacker 
+Action: A2 to B2 
+AI time for action: 0.1s 
+AI heuristic score: 0
+ 
+Cumulative evals: 9181 
+Cumulative evals by depth: 1:30 2:229 3:617 4:8305 
+Cumulative % evals by depth: 1:0.3% 2:2.5% 3:6.7% 4:90.5% 
+New configuration of the board: 
+    0   1   2   3   4  
+A:  .  dA6 aP2  .   .  
+B: dT9 dP9  .   .   .  
+C: dF9  .  dF9  .   .  
+D:  .   .   .  aF9 aV9 
+E:  .   .  aP9 aV9 aA9 
+
+____________________________________________ 
+ 
+Turn number: 16/100 
+Player: Defender 
+Action: A1 to A2 
+AI time for action: 0.1s 
+AI heuristic score: 0
+ 
+Cumulative evals: 9605 
+Cumulative evals by depth: 1:32 2:242 3:650 4:8681 
+Cumulative % evals by depth: 1:0.3% 2:2.5% 3:6.8% 4:90.4% 
+New configuration of the board: 
+    0   1   2   3   4  
+A:  .  dA3  .   .   .  
+B: dT9 dP9  .   .   .  
+C: dF9  .  dF9  .   .  
+D:  .   .   .  aF9 aV9 
+E:  .   .  aP9 aV9 aA9 
+
+____________________________________________ 
+ 
+Turn number: 17/100 
+Player: Attacker 
+Action: D3 to C3 
+AI time for action: 0.1s 
+AI heuristic score: 0
+ 
+Cumulative evals: 9957 
+Cumulative evals by depth: 1:34 2:252 3:678 4:8993 
+Cumulative % evals by depth: 1:0.3% 2:2.5% 3:6.8% 4:90.3% 
+New configuration of the board: 
+    0   1   2   3   4  
+A:  .  dA3  .   .   .  
+B: dT9 dP9  .   .   .  
+C: dF9  .  dF9 aF9  .  
+D:  .   .   .   .  aV9 
+E:  .   .  aP9 aV9 aA9 
+
+____________________________________________ 
+ 
+Turn number: 18/100 
+Player: Defender 
+Action: A1 to A2 
+AI time for action: 0.1s 
+AI heuristic score: 0
+ 
+Cumulative evals: 10358 
+Cumulative evals by depth: 1:36 2:264 3:711 4:9347 
+Cumulative % evals by depth: 1:0.3% 2:2.5% 3:6.9% 4:90.2% 
+New configuration of the board: 
+    0   1   2   3   4  
+A:  .   .  dA3  .   .  
+B: dT9 dP9  .   .   .  
+C: dF9  .  dF9 aF9  .  
+D:  .   .   .   .  aV9 
+E:  .   .  aP9 aV9 aA9 
+
+____________________________________________ 
+ 
+Turn number: 19/100 
+Player: Attacker 
+Action: C3 to C2 
+AI time for action: 0.1s 
+AI heuristic score: 0
+ 
+Cumulative evals: 10760 
+Cumulative evals by depth: 1:38 2:275 3:742 4:9705 
+Cumulative % evals by depth: 1:0.4% 2:2.6% 3:6.9% 4:90.2% 
+New configuration of the board: 
+    0   1   2   3   4  
+A:  .   .  dA3  .   .  
+B: dT9 dP9  .   .   .  
+C: dF9  .  dF8 aF8  .  
+D:  .   .   .   .  aV9 
+E:  .   .  aP9 aV9 aA9 
+
+____________________________________________ 
+ 
+Turn number: 20/100 
+Player: Defender 
+Action: A2 to B2 
+AI time for action: 0.1s 
+AI heuristic score: 0
+ 
+Cumulative evals: 11198 
+Cumulative evals by depth: 1:40 2:288 3:775 4:10095 
+Cumulative % evals by depth: 1:0.4% 2:2.6% 3:6.9% 4:90.2% 
+New configuration of the board: 
+    0   1   2   3   4  
+A:  .   .   .   .   .  
+B: dT9 dP9 dA3  .   .  
+C: dF9  .  dF8 aF8  .  
+D:  .   .   .   .  aV9 
+E:  .   .  aP9 aV9 aA9 
+
+____________________________________________ 
+ 
+Turn number: 21/100 
+Player: Attacker 
+Action: C3 to C2 
+AI time for action: 0.1s 
+AI heuristic score: 0
+ 
+Cumulative evals: 11556 
+Cumulative evals by depth: 1:42 2:299 3:804 4:10411 
+Cumulative % evals by depth: 1:0.4% 2:2.6% 3:7.0% 4:90.1% 
+New configuration of the board: 
+    0   1   2   3   4  
+A:  .   .   .   .   .  
+B: dT9 dP9 dA3  .   .  
+C: dF9  .  dF7 aF7  .  
+D:  .   .   .   .  aV9 
+E:  .   .  aP9 aV9 aA9 
+
+____________________________________________ 
+ 
+Turn number: 22/100 
+Player: Defender 
+Action: B0 to A0 
+AI time for action: 0.1s 
+AI heuristic score: 0
+ 
+Cumulative evals: 11908 
+Cumulative evals by depth: 1:44 2:310 3:837 4:10717 
+Cumulative % evals by depth: 1:0.4% 2:2.6% 3:7.0% 4:90.0% 
+New configuration of the board: 
+    0   1   2   3   4  
+A: dT9  .   .   .   .  
+B:  .  dP9 dA3  .   .  
+C: dF9  .  dF7 aF7  .  
+D:  .   .   .   .  aV9 
+E:  .   .  aP9 aV9 aA9 
+
+____________________________________________ 
+ 
+Turn number: 23/100 
+Player: Attacker 
+Action: C3 to C2 
+AI time for action: 0.1s 
+AI heuristic score: 0
+ 
+Cumulative evals: 12279 
+Cumulative evals by depth: 1:46 2:321 3:867 4:11045 
+Cumulative % evals by depth: 1:0.4% 2:2.6% 3:7.1% 4:90.0% 
+New configuration of the board: 
+    0   1   2   3   4  
+A: dT9  .   .   .   .  
+B:  .  dP9 dA3  .   .  
+C: dF9  .  dF6 aF6  .  
+D:  .   .   .   .  aV9 
+E:  .   .  aP9 aV9 aA9 
+
+____________________________________________ 
+ 
+Turn number: 24/100 
+Player: Defender 
+Action: A0 to B0 
+AI time for action: 0.1s 
+AI heuristic score: 0
+ 
+Cumulative evals: 12654 
+Cumulative evals by depth: 1:48 2:333 3:902 4:11371 
+Cumulative % evals by depth: 1:0.4% 2:2.6% 3:7.1% 4:89.9% 
+New configuration of the board: 
+    0   1   2   3   4  
+A:  .   .   .   .   .  
+B: dT9 dP9 dA3  .   .  
+C: dF9  .  dF6 aF6  .  
+D:  .   .   .   .  aV9 
+E:  .   .  aP9 aV9 aA9 
+
+____________________________________________ 
+ 
+Turn number: 25/100 
+Player: Attacker 
+Action: C3 to C2 
+AI time for action: 0.1s 
+AI heuristic score: 0
+ 
+Cumulative evals: 13012 
+Cumulative evals by depth: 1:50 2:344 3:931 4:11687 
+Cumulative % evals by depth: 1:0.4% 2:2.6% 3:7.2% 4:89.8% 
+New configuration of the board: 
+    0   1   2   3   4  
+A:  .   .   .   .   .  
+B: dT9 dP9 dA3  .   .  
+C: dF9  .  dF5 aF5  .  
+D:  .   .   .   .  aV9 
+E:  .   .  aP9 aV9 aA9 
+
+____________________________________________ 
+ 
+Turn number: 26/100 
+Player: Defender 
+Action: B0 to A0 
+AI time for action: 0.1s 
+AI heuristic score: 0
+ 
+Cumulative evals: 13364 
+Cumulative evals by depth: 1:52 2:355 3:964 4:11993 
+Cumulative % evals by depth: 1:0.4% 2:2.7% 3:7.2% 4:89.7% 
+New configuration of the board: 
+    0   1   2   3   4  
+A: dT9  .   .   .   .  
+B:  .  dP9 dA3  .   .  
+C: dF9  .  dF5 aF5  .  
+D:  .   .   .   .  aV9 
+E:  .   .  aP9 aV9 aA9 
+
+____________________________________________ 
+ 
+Turn number: 27/100 
+Player: Attacker 
+Action: C3 to C2 
+AI time for action: 0.1s 
+AI heuristic score: 0
+ 
+Cumulative evals: 13735 
+Cumulative evals by depth: 1:54 2:366 3:994 4:12321 
+Cumulative % evals by depth: 1:0.4% 2:2.7% 3:7.2% 4:89.7% 
+New configuration of the board: 
+    0   1   2   3   4  
+A: dT9  .   .   .   .  
+B:  .  dP9 dA3  .   .  
+C: dF9  .  dF4 aF4  .  
+D:  .   .   .   .  aV9 
+E:  .   .  aP9 aV9 aA9 
+
+____________________________________________ 
+ 
+Turn number: 28/100 
+Player: Defender 
+Action: A0 to B0 
+AI time for action: 0.1s 
+AI heuristic score: 0
+ 
+Cumulative evals: 14110 
+Cumulative evals by depth: 1:56 2:378 3:1029 4:12647 
+Cumulative % evals by depth: 1:0.4% 2:2.7% 3:7.3% 4:89.6% 
+New configuration of the board: 
+    0   1   2   3   4  
+A:  .   .   .   .   .  
+B: dT9 dP9 dA3  .   .  
+C: dF9  .  dF4 aF4  .  
+D:  .   .   .   .  aV9 
+E:  .   .  aP9 aV9 aA9 
+
+____________________________________________ 
+ 
+Turn number: 29/100 
+Player: Attacker 
+Action: C3 to C2 
+AI time for action: 0.1s 
+AI heuristic score: 0
+ 
+Cumulative evals: 14467 
+Cumulative evals by depth: 1:58 2:389 3:1058 4:12962 
+Cumulative % evals by depth: 1:0.4% 2:2.7% 3:7.3% 4:89.6% 
+New configuration of the board: 
+    0   1   2   3   4  
+A:  .   .   .   .   .  
+B: dT9 dP9 dA3  .   .  
+C: dF9  .  dF3 aF3  .  
+D:  .   .   .   .  aV9 
+E:  .   .  aP9 aV9 aA9 
+
+____________________________________________ 
+ 
+Turn number: 30/100 
+Player: Defender 
+Action: B0 to A0 
+AI time for action: 0.1s 
+AI heuristic score: 0
+ 
+Cumulative evals: 14821 
+Cumulative evals by depth: 1:60 2:400 3:1090 4:13271 
+Cumulative % evals by depth: 1:0.4% 2:2.7% 3:7.4% 4:89.5% 
+New configuration of the board: 
+    0   1   2   3   4  
+A: dT9  .   .   .   .  
+B:  .  dP9 dA3  .   .  
+C: dF9  .  dF3 aF3  .  
+D:  .   .   .   .  aV9 
+E:  .   .  aP9 aV9 aA9 
+
+____________________________________________ 
+ 
+Turn number: 31/100 
+Player: Attacker 
+Action: C3 to C2 
+AI time for action: 0.1s 
+AI heuristic score: 0
+ 
+Cumulative evals: 15211 
+Cumulative evals by depth: 1:62 2:411 3:1120 4:13618 
+Cumulative % evals by depth: 1:0.4% 2:2.7% 3:7.4% 4:89.5% 
+New configuration of the board: 
+    0   1   2   3   4  
+A: dT9  .   .   .   .  
+B:  .  dP9 dA3  .   .  
+C: dF9  .  dF2 aF2  .  
+D:  .   .   .   .  aV9 
+E:  .   .  aP9 aV9 aA9 
+
+____________________________________________ 
+ 
+Turn number: 32/100 
+Player: Defender 
+Action: A0 to B0 
+AI time for action: 0.1s 
+AI heuristic score: 0
+ 
+Cumulative evals: 15653 
+Cumulative evals by depth: 1:64 2:423 3:1157 4:14009 
+Cumulative % evals by depth: 1:0.4% 2:2.7% 3:7.4% 4:89.5% 
+New configuration of the board: 
+    0   1   2   3   4  
+A:  .   .   .   .   .  
+B: dT9 dP9 dA3  .   .  
+C: dF9  .  dF2 aF2  .  
+D:  .   .   .   .  aV9 
+E:  .   .  aP9 aV9 aA9 
+
+____________________________________________ 
+ 
+Turn number: 33/100 
+Player: Attacker 
+Action: C3 to C2 
+AI time for action: 0.1s 
+AI heuristic score: 0
+ 
+Cumulative evals: 16015 
+Cumulative evals by depth: 1:66 2:434 3:1186 4:14329 
+Cumulative % evals by depth: 1:0.4% 2:2.7% 3:7.4% 4:89.5% 
+New configuration of the board: 
+    0   1   2   3   4  
+A:  .   .   .   .   .  
+B: dT9 dP9 dA3  .   .  
+C: dF9  .  dF1 aF1  .  
+D:  .   .   .   .  aV9 
+E:  .   .  aP9 aV9 aA9 
+
+____________________________________________ 
+ 
+Turn number: 34/100 
+Player: Defender 
+Action: B0 to A0 
+AI time for action: 0.1s 
+AI heuristic score: 0
+ 
+Cumulative evals: 16427 
+Cumulative evals by depth: 1:68 2:445 3:1221 4:14693 
+Cumulative % evals by depth: 1:0.4% 2:2.7% 3:7.4% 4:89.4% 
+New configuration of the board: 
+    0   1   2   3   4  
+A: dT9  .   .   .   .  
+B:  .  dP9 dA3  .   .  
+C: dF9  .  dF1 aF1  .  
+D:  .   .   .   .  aV9 
+E:  .   .  aP9 aV9 aA9 
+
+____________________________________________ 
+ 
+Turn number: 35/100 
+Player: Attacker 
+Action: C3 to C2 
+AI time for action: 0.1s 
+AI heuristic score: 0
+ 
+Cumulative evals: 16864 
+Cumulative evals by depth: 1:70 2:456 3:1256 4:15082 
+Cumulative % evals by depth: 1:0.4% 2:2.7% 3:7.4% 4:89.4% 
+New configuration of the board: 
+    0   1   2   3   4  
+A: dT9  .   .   .   .  
+B:  .  dP9 dA3  .   .  
+C: dF9  .   .   .   .  
+D:  .   .   .   .  aV9 
+E:  .   .  aP9 aV9 aA9 
+
+____________________________________________ 
+ 
+Turn number: 36/100 
+Player: Defender 
+Action: A0 to B0 
+AI time for action: 0.0s 
+AI heuristic score: 0
+ 
+Cumulative evals: 17171 
+Cumulative evals by depth: 1:72 2:467 3:1283 4:15349 
+Cumulative % evals by depth: 1:0.4% 2:2.7% 3:7.5% 4:89.4% 
+New configuration of the board: 
+    0   1   2   3   4  
+A:  .   .   .   .   .  
+B: dT9 dP9 dA3  .   .  
+C: dF9  .   .   .   .  
+D:  .   .   .   .  aV9 
+E:  .   .  aP9 aV9 aA9 
+
+____________________________________________ 
+ 
+Turn number: 37/100 
+Player: Attacker 
+Action: D4 to C4 
+AI time for action: 0.0s 
+AI heuristic score: 0
+ 
+Cumulative evals: 17442 
+Cumulative evals by depth: 1:74 2:476 3:1307 4:15585 
+Cumulative % evals by depth: 1:0.4% 2:2.7% 3:7.5% 4:89.4% 
+New configuration of the board: 
+    0   1   2   3   4  
+A:  .   .   .   .   .  
+B: dT9 dP9 dA3  .   .  
+C: dF9  .   .   .  aV9 
+D:  .   .   .   .   .  
+E:  .   .  aP9 aV9 aA9 
+
+____________________________________________ 
+ 
+Turn number: 38/100 
+Player: Defender 
+Action: B0 to A0 
+AI time for action: 0.0s 
+AI heuristic score: 0
+ 
+Cumulative evals: 17761 
+Cumulative evals by depth: 1:76 2:486 3:1335 4:15864 
+Cumulative % evals by depth: 1:0.4% 2:2.7% 3:7.5% 4:89.3% 
+New configuration of the board: 
+    0   1   2   3   4  
+A: dT9  .   .   .   .  
+B:  .  dP9 dA3  .   .  
+C: dF9  .   .   .  aV9 
+D:  .   .   .   .   .  
+E:  .   .  aP9 aV9 aA9 
+
+____________________________________________ 
+ 
+Turn number: 39/100 
+Player: Attacker 
+Action: C4 to B4 
+AI time for action: 0.0s 
+AI heuristic score: 0
+ 
+Cumulative evals: 18111 
+Cumulative evals by depth: 1:78 2:497 3:1364 4:16172 
+Cumulative % evals by depth: 1:0.4% 2:2.7% 3:7.5% 4:89.3% 
+New configuration of the board: 
+    0   1   2   3   4  
+A: dT9  .   .   .   .  
+B:  .  dP9 dA3  .  aV9 
+C: dF9  .   .   .   .  
+D:  .   .   .   .   .  
+E:  .   .  aP9 aV9 aA9 
+
+____________________________________________ 
+ 
+Turn number: 40/100 
+Player: Defender 
+Action: A0 to B0 
+AI time for action: 0.1s 
+AI heuristic score: 9999
+ 
+Cumulative evals: 18814 
+Cumulative evals by depth: 1:80 2:509 3:1422 4:16803 
+Cumulative % evals by depth: 1:0.4% 2:2.7% 3:7.6% 4:89.3% 
+New configuration of the board: 
+    0   1   2   3   4  
+A:  .   .   .   .   .  
+B: dT9 dP9 dA3  .  aV9 
+C: dF9  .   .   .   .  
+D:  .   .   .   .   .  
+E:  .   .  aP9 aV9 aA9 
+
+____________________________________________ 
+ 
+Turn number: 41/100 
+Player: Attacker 
+Action: B4 to B3 
+AI time for action: 0.0s 
+AI heuristic score: 9999
+ 
+Cumulative evals: 19206 
+Cumulative evals by depth: 1:82 2:522 3:1463 4:17139 
+Cumulative % evals by depth: 1:0.4% 2:2.7% 3:7.6% 4:89.2% 
+New configuration of the board: 
+    0   1   2   3   4  
+A:  .   .   .   .   .  
+B: dT9 dP9 dA3 aV9  .  
+C: dF9  .   .   .   .  
+D:  .   .   .   .   .  
+E:  .   .  aP9 aV9 aA9 
+
+____________________________________________ 
+ 
+Turn number: 42/100 
+Player: Defender 
+Action: B0 to A0 
+AI time for action: 0.0s 
+AI heuristic score: 9999
+ 
+Cumulative evals: 19572 
+Cumulative evals by depth: 1:85 2:537 3:1486 4:17464 
+Cumulative % evals by depth: 1:0.4% 2:2.7% 3:7.6% 4:89.2% 
+New configuration of the board: 
+    0   1   2   3   4  
+A: dT9  .   .   .   .  
+B:  .  dP9 dA3 aV9  .  
+C: dF9  .   .   .   .  
+D:  .   .   .   .   .  
+E:  .   .  aP9 aV9 aA9 
+
+____________________________________________ 
+ 
+Turn number: 43/100 
+Player: Attacker 
+Action: B3 to B2 
+AI time for action: 0.0s 
+AI heuristic score: 9999
+ 
+Cumulative evals: 19929 
+Cumulative evals by depth: 1:88 2:548 3:1521 4:17772 
+Cumulative % evals by depth: 1:0.4% 2:2.7% 3:7.6% 4:89.2% 
+New configuration of the board: 
+    0   1   2   3   4  
+A: dT9  .   .   .   .  
+B:  .  dP9  .  aV6  .  
+C: dF9  .   .   .   .  
+D:  .   .   .   .   .  
+E:  .   .  aP9 aV9 aA9 
+
+
+ 
+GAME OVER!!!!!!! 
+Attacker wins in 43 turns
