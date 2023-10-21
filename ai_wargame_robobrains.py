@@ -632,11 +632,12 @@ class Game:
             move.src = src
             for dst in src.iter_adjacent():
                 move.dst = dst
-                if self.is_valid_move(move) or self.is_valid_perform(move):
+                if self.is_valid_move(move) or self.is_valid_perform(move): # added is_valid_perform to check if moves are attack/repair/delf-destroy
                     yield move.clone()
             move.dst = src
             yield move.clone()
 
+    # returns true of move is attack/depair/self-destruct
     def is_valid_perform(self, coords: CoordPair) -> bool:
         """simulation: Validate and perform a move expressed as a CoordPair. TODO: WRITE MISSING CODE!!!"""
 
@@ -681,6 +682,7 @@ class Game:
                     return False
         return False
 
+    # is not used anymore
     def random_move(self) -> Tuple[int, CoordPair | None, float]:
         """Returns a random move."""
         move_candidates = list(self.move_candidates())
