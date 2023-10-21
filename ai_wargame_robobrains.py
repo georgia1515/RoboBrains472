@@ -270,7 +270,7 @@ class Game:
     gameTrace_path: str = ''
     heuristic_score: int = 0
 
-    # number of units for attacker
+    # number of units for attacker and defender
     numOfProgramsAttacker: int = 2
     numOfFirewallAttacker: int = 1
     numOfProgramsDefender: int = 1
@@ -695,18 +695,21 @@ class Game:
     def suggest_move(self):
         start_time = datetime.now()
         branchingFactor = []
-
+        # will use alpha beta unless options alpha_beta_off
         if (self.options.alpha_beta):
             score, best_move = self.alpha_beta_minimax(
                 MIN_HEURISTIC_SCORE, MAX_HEURISTIC_SCORE, self.next_player, 0, branchingFactor)
         else:
             score, best_move = self.alpha_beta_minimax(None, None, self.next_player, 0, branchingFactor)
         
+        # set stats and score
         self.heuristic_score = score
         self.stats.elapsed_time = (datetime.now() - start_time).total_seconds()
         self.stats.total_time += self.stats.elapsed_time
+        # find the average branching factor by finding the sum of all values (number of children) by the number of nodes with children
         self.stats.avg_branching_factor = round(sum(branchingFactor)/len(branchingFactor), 2)
         total_evals = sum(self.stats.evaluations_per_depth.values())
+        # prints out information about the chosen move
         print(f"Elapsed time: {self.stats.elapsed_time :0.1f}s")
         print(f"Heuristic score: {self.heuristic_score}")
         print(f"Total evaluations: {total_evals}")
@@ -727,56 +730,72 @@ class Game:
         return best_move
     
     def alpha_beta_minimax(self, alpha, beta, maximizing_player, current_depth, branchingFactor):
+        # base case of the recursive method, recursion ends when we get to the max depth or if game is over
         if self.options.max_depth == current_depth or self.is_finished():
+            # increment value by one at the max depth
             self.stats.evaluations_per_depth[current_depth] += 1
-            # print("No children")
-            return self.custom_heuristic(), None
+            # returns heuristic score based on chosen heuristic
+            return self.chosen_heuristic(), None
 
         best_move = None
+        # increment value by one for the evaluations
         self.stats.evaluations_per_depth[current_depth+1] += 1
+
+        # set number of children for this current node
         numOfChildrens = 0
 
+        # maximizing player
         if maximizing_player is Player.Attacker:
             max_score = float("-inf")
+            # iterate through all the possible moves
             for move in self.move_candidates():
+                # increment value by one for each move (number of children)
                 numOfChildrens += 1
                 new_game = self.clone()
                 new_game.perform_move(move)
                 new_game.next_turn()
+                # calls method recursively with all potential moves after performing move
                 score, _, = new_game.alpha_beta_minimax(
                     alpha, beta, Player.Defender, current_depth + 1, branchingFactor)
+                # replaces score if better one found
                 if score > max_score:
                     max_score = score
                     best_move = move
+                # including alpha beta pruning
                 if(alpha is not None and beta is not None):
                     alpha = max(alpha, max_score)
                     if beta <= alpha:
                         break  # Alpha-beta pruning
-            # print(f"Number of children: {numOfChildrens}")
+            # add number of children to branching factor list to calculate avg branching factor later
             branchingFactor.append(numOfChildrens)
             return max_score, best_move
-
+        # minimizing player
         else:
             min_score = float("inf")
+            # iterate through all the possible moves
             for move in self.move_candidates():
+                # increment value by one for each move (number of children)
                 numOfChildrens += 1
                 new_game = self.clone()
                 new_game.perform_move(move)
                 new_game.next_turn()
+                # calls method recursively with all potential moves after performing move
                 score, _, = new_game.alpha_beta_minimax(
                     alpha, beta, Player.Attacker, current_depth + 1, branchingFactor)
+                # replaces score if better one found
                 if score < min_score:
                     min_score = score
                     best_move = move
+                # including alpha beta pruning
                 if(alpha is not None and beta is not None):
                     beta = min(beta, min_score)
                     if beta <= alpha:
                         break  # Alpha-beta pruning
-            # print(f"Number of children: {numOfChildrens}")
+            # add number of children to branching factor list to calculate avg branching factor later
             branchingFactor.append(numOfChildrens)
             return min_score, best_move
 
-
+    # chooses heuristic based on condition entered 
     def chosen_heuristic(self):
         if self.options.heuristic == 0:
             return self.heuristicE0()
@@ -787,12 +806,15 @@ class Game:
         else:
             return self.heuristicE0()
     
+    # implementing heuristic E0 given in the handout
     def heuristicE0(self):
         return ((3 * (self.numOfVirusesAttacker - self.numOfTechsDefender)
           + 3 * (self.numOfFirewallAttacker - self.numOfFirewallDefender)
           + 3 * (self.numOfProgramsAttacker - self.numOfProgramsDefender)
           + 9999 * (self.numOfAIAttacker - self.numOfAIDefender)))
 
+    # implementing heuristic E1 which is based on the health of a unit, its weight, and its position on the board
+    # weight is added if units are in central positions on the board
     def heuristicE1(self):
         attackerScore=0
         defenderScore=0
@@ -843,6 +865,8 @@ class Game:
             
         return attackerScore - defenderScore
 
+    # implementing Heuristic E2 based on weight of unit and its position on the board
+    # score is augmented based on a unit's distance to the opponent's AI
     def heuristicE2(self):
         score = 0
 
@@ -863,29 +887,31 @@ class Game:
                 coordAttackerAI_row = coord.row
                 coordAttackerAI_col = coord.col
 
+        # calculate health and and find how far the unit is from the opponents AI
         for (coord, unit) in self.player_units(Player.Attacker):
             if unit.is_alive():
                 if (unit.type == UnitType.Virus):
-                    score += unit.health * 7
-                elif (unit.type == UnitType.Firewall):
-                    score += unit.health * 1
-                elif (unit.type == UnitType.Program):
-                    score += unit.health * 2
-                elif (unit.type == UnitType.AI):
                     score += unit.health * 20
+                elif (unit.type == UnitType.Firewall):
+                    score += unit.health * 5
+                elif (unit.type == UnitType.Program):
+                    score += unit.health * 10
+                elif (unit.type == UnitType.AI):
+                    score += unit.health * 999
                 
                 score += abs(coord.row - coordDefenderAI_row) + abs(coord.col - coordDefenderAI_col)
         
+        # calculate health and and find how far the unit is from the opponents AI
         for (coord, unit) in self.player_units(Player.Defender):
             if unit.is_alive():
                 if (unit.type == UnitType.Tech):
-                    score -= unit.health * 6
+                    score -= unit.health * 19
                 elif (unit.type == UnitType.Firewall):
-                    score -= unit.health * 1
+                    score -= unit.health * 5
                 elif (unit.type == UnitType.Program):
-                    score -= unit.health * 2
+                    score -= unit.health * 10
                 elif (unit.type == UnitType.AI):
-                    score -= unit.health * 20
+                    score -= unit.health * 999
 
                 score -= (abs(coord.row - coordAttackerAI_row) + abs(coord.col - coordAttackerAI_col))
 
