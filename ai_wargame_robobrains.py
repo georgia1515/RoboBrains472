@@ -698,9 +698,9 @@ class Game:
         # will use alpha beta unless options alpha_beta_off
         if (self.options.alpha_beta):
             score, best_move = self.alpha_beta_minimax(
-                MIN_HEURISTIC_SCORE, MAX_HEURISTIC_SCORE, self.next_player, 0, branchingFactor)
+                MIN_HEURISTIC_SCORE, MAX_HEURISTIC_SCORE, self.next_player, 0, branchingFactor, start_time)
         else:
-            score, best_move = self.alpha_beta_minimax(None, None, self.next_player, 0, branchingFactor)
+            score, best_move = self.alpha_beta_minimax(None, None, self.next_player, 0, branchingFactor, start_time)
         
         # set stats and score
         self.heuristic_score = score
@@ -729,7 +729,7 @@ class Game:
         # Return the best move
         return best_move
     
-    def alpha_beta_minimax(self, alpha, beta, maximizing_player, current_depth, branchingFactor):
+    def alpha_beta_minimax(self, alpha, beta, maximizing_player, current_depth, branchingFactor, startTime):
         # base case of the recursive method, recursion ends when we get to the max depth or if game is over
         if self.options.max_depth == current_depth or self.is_finished():
             # increment value by one at the max depth
@@ -754,9 +754,15 @@ class Game:
                 new_game = self.clone()
                 new_game.perform_move(move)
                 new_game.next_turn()
+
+                # interrupts search depth if not enough time to continue (uncomment the next 3 lines)
+                # if (datetime.now() - startTime).total_seconds() >= self.options.max_time -0.5:
+                #     print("TOOK TOO LONG")
+                #     return max_score, best_move
+                
                 # calls method recursively with all potential moves after performing move
                 score, _, = new_game.alpha_beta_minimax(
-                    alpha, beta, Player.Defender, current_depth + 1, branchingFactor)
+                    alpha, beta, Player.Defender, current_depth + 1, branchingFactor, startTime)
                 # replaces score if better one found
                 if score > max_score:
                     max_score = score
@@ -779,9 +785,16 @@ class Game:
                 new_game = self.clone()
                 new_game.perform_move(move)
                 new_game.next_turn()
+
+                # interrupts search depth if not enough time to continue (uncomment the next 3 lines)
+                # if (datetime.now() - startTime).total_seconds() >= self.options.max_time -0.5:
+                #     print("TOOK TOO LONG")
+                #     return min_score, best_move
+                
+
                 # calls method recursively with all potential moves after performing move
                 score, _, = new_game.alpha_beta_minimax(
-                    alpha, beta, Player.Attacker, current_depth + 1, branchingFactor)
+                    alpha, beta, Player.Attacker, current_depth + 1, branchingFactor, startTime)
                 # replaces score if better one found
                 if score < min_score:
                     min_score = score

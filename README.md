@@ -2,11 +2,9 @@
 
 Concordia Comp-472 Project
 
-This is the code for our AI Wargame for Delivery 1.
+This is the code for our AI Wargame for Delivery 2.
 
-The methods "is_valid_move" and "perform_move" were modified and the missing code was implemented.
-
-Also, the method "trace_each_action" was added and the "to_string" was modified in order to create an output file containing the trace of the game.
+The methods "alpha_beta_minimax" was implemented and some more changes were made.
 
 Team Name: RoboBrains
 
