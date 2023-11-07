@@ -1,54 +1,116 @@
 
-****************************************
-Model: Top-MLP Penguins
+________________________________________________________________________________
+(A)
+Model: Base-DT Penguins
+
+(B)
 Confusion Matrix:
-[[38  0  0]
- [16  0  0]
- [30  0  0]]
+[[34  1  0]
+ [ 0 18  0]
+ [ 0  0 31]]
+
+(C)
 Classification Report:
               precision    recall  f1-score   support
 
-      Adelie       0.45      1.00      0.62        38
-   Chinstrap       0.00      0.00      0.00        16
-      Gentoo       0.00      0.00      0.00        30
+      Adelie       1.00      0.97      0.99        35
+   Chinstrap       0.95      1.00      0.97        18
+      Gentoo       1.00      1.00      1.00        31
 
-    accuracy                           0.45        84
-   macro avg       0.15      0.33      0.21        84
-weighted avg       0.20      0.45      0.28        84
+    accuracy                           0.99        84
+   macro avg       0.98      0.99      0.99        84
+weighted avg       0.99      0.99      0.99        84
 
-Accuracy: 0.4524
-Macro-average F1: 0.2077
-Weighted-average F1: 0.2818
-****************************************
 
---- Base-DT ---
-accuracy_mean: 0.9643
-accuracy_var: 0.0002
-macro_f1_mean: 0.9602
-macro_f1_var: 0.0004
-weighted_f1_mean: 0.9640
-weighted_f1_var: 0.0002
+(D)
+Accuracy: 0.9881
+Macro-average F1: 0.9862
+Weighted-average F1: 0.9882
+________________________________________________________________________________
 
---- Top-DT ---
-accuracy_mean: 0.9571
-accuracy_var: 0.0003
-macro_f1_mean: 0.9508
-macro_f1_var: 0.0004
-weighted_f1_mean: 0.9567
-weighted_f1_var: 0.0003
+________________________________________________________________________________
+(A)
+Model: Top-DT Penguins
 
---- Base-MLP ---
-accuracy_mean: 0.4524
-accuracy_var: 0.0000
-macro_f1_mean: 0.2077
-macro_f1_var: 0.0000
-weighted_f1_mean: 0.2818
-weighted_f1_var: 0.0000
+(B)
+Confusion Matrix:
+[[33  2  0]
+ [ 1 17  0]
+ [ 0  0 31]]
 
---- Top-MLP ---
-accuracy_mean: 0.5786
-accuracy_var: 0.0239
-macro_f1_mean: 0.3547
-macro_f1_var: 0.0325
-weighted_f1_mean: 0.4455
-weighted_f1_var: 0.0402
+(C)
+Classification Report:
+              precision    recall  f1-score   support
+
+      Adelie       0.97      0.94      0.96        35
+   Chinstrap       0.89      0.94      0.92        18
+      Gentoo       1.00      1.00      1.00        31
+
+    accuracy                           0.96        84
+   macro avg       0.96      0.96      0.96        84
+weighted avg       0.97      0.96      0.96        84
+
+
+(D)
+Accuracy: 0.9643
+Macro-average F1: 0.9585
+Weighted-average F1: 0.9645
+________________________________________________________________________________
+
+________________________________________________________________________________
+(A)
+Model: Base-MLP Penguins
+
+(B)
+Confusion Matrix:
+[[35  0  0]
+ [18  0  0]
+ [31  0  0]]
+
+(C)
+Classification Report:
+              precision    recall  f1-score   support
+
+      Adelie       0.42      1.00      0.59        35
+   Chinstrap       0.00      0.00      0.00        18
+      Gentoo       0.00      0.00      0.00        31
+
+    accuracy                           0.42        84
+   macro avg       0.14      0.33      0.20        84
+weighted avg       0.17      0.42      0.25        84
+
+
+(D)
+Accuracy: 0.4167
+Macro-average F1: 0.1961
+Weighted-average F1: 0.2451
+________________________________________________________________________________
+
+________________________________________________________________________________
+(A)
+Model: Top-MLP Penguins
+
+(B)
+Confusion Matrix:
+[[30  0  5]
+ [18  0  0]
+ [ 0  0 31]]
+
+(C)
+Classification Report:
+              precision    recall  f1-score   support
+
+      Adelie       0.62      0.86      0.72        35
+   Chinstrap       0.00      0.00      0.00        18
+      Gentoo       0.86      1.00      0.93        31
+
+    accuracy                           0.73        84
+   macro avg       0.50      0.62      0.55        84
+weighted avg       0.58      0.73      0.64        84
+
+
+(D)
+Accuracy: 0.7262
+Macro-average F1: 0.5494
+Weighted-average F1: 0.6427
+________________________________________________________________________________
