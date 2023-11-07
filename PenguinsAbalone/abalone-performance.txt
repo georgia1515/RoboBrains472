@@ -1,0 +1,124 @@
+
+****************************************
+Model: Base-DT Abalone
+Confusion Matrix:
+[[138  37 132]
+ [ 59 222  81]
+ [151  60 165]]
+Classification Report:
+              precision    recall  f1-score   support
+
+           F       0.40      0.45      0.42       307
+           I       0.70      0.61      0.65       362
+           M       0.44      0.44      0.44       376
+
+    accuracy                           0.50      1045
+   macro avg       0.51      0.50      0.50      1045
+weighted avg       0.51      0.50      0.51      1045
+
+Accuracy: 0.5024
+Macro-average F1: 0.5037
+Weighted-average F1: 0.5071
+****************************************
+
+****************************************
+Model: Top-DT Abalone
+Confusion Matrix:
+[[ 97  55 155]
+ [ 23 282  57]
+ [ 87  67 222]]
+Classification Report:
+              precision    recall  f1-score   support
+
+           F       0.47      0.32      0.38       307
+           I       0.70      0.78      0.74       362
+           M       0.51      0.59      0.55       376
+
+    accuracy                           0.58      1045
+   macro avg       0.56      0.56      0.55      1045
+weighted avg       0.56      0.58      0.56      1045
+
+Accuracy: 0.5751
+Macro-average F1: 0.5540
+Weighted-average F1: 0.5632
+****************************************
+
+****************************************
+Model: Base-MLP Abalone
+Confusion Matrix:
+[[  0  12 295]
+ [  0 184 178]
+ [  0  26 350]]
+Classification Report:
+              precision    recall  f1-score   support
+
+           F       0.00      0.00      0.00       307
+           I       0.83      0.51      0.63       362
+           M       0.43      0.93      0.58       376
+
+    accuracy                           0.51      1045
+   macro avg       0.42      0.48      0.40      1045
+weighted avg       0.44      0.51      0.43      1045
+
+Accuracy: 0.5110
+Macro-average F1: 0.4047
+Weighted-average F1: 0.4284
+****************************************
+
+****************************************
+Model: Top-MLP Abalone
+Confusion Matrix:
+[[ 86  42 179]
+ [ 38 290  34]
+ [106  67 203]]
+Classification Report:
+              precision    recall  f1-score   support
+
+           F       0.37      0.28      0.32       307
+           I       0.73      0.80      0.76       362
+           M       0.49      0.54      0.51       376
+
+    accuracy                           0.55      1045
+   macro avg       0.53      0.54      0.53      1045
+weighted avg       0.54      0.55      0.54      1045
+
+Accuracy: 0.5541
+Macro-average F1: 0.5317
+Weighted-average F1: 0.5426
+****************************************
+
+--- DecisionTreeClassifier ---
+accuracy_mean: 0.5064114832535885
+accuracy_var: 3.128133513426872e-05
+macro_f1_mean: 0.5071161986496149
+macro_f1_var: 3.2486096734752905e-05
+weighted_f1_mean: 0.5105908235016402
+weighted_f1_var: 3.343071544944335e-05
+
+--- Top-DT ---
+accuracy_mean_mean: 0.5751196172248804
+accuracy_mean_var: 0.0
+accuracy_var_mean: 0.0
+accuracy_var_var: 0.0
+macro_f1_mean_mean: 0.5539574943204558
+macro_f1_mean_var: 0.0
+macro_f1_var_mean: 0.0
+macro_f1_var_var: 0.0
+weighted_f1_mean_mean: 0.5631704861648573
+weighted_f1_mean_var: 0.0
+weighted_f1_var_mean: 0.0
+weighted_f1_var_var: 0.0
+
+--- Base-MLP ---
+accuracy_mean_mean: 0.5573205741626794
+accuracy_mean_var: 0.0
+accuracy_var_mean: 5.150065245759026e-05
+accuracy_var_var: 0.0
+macro_f1_mean_mean: 0.49996609537746706
+macro_f1_mean_var: 0.0
+macro_f1_var_mean: 0.0009525134681464759
+macro_f1_var_var: 0.0
+weighted_f1_mean_mean: 0.5101172616255103
+weighted_f1_mean_var: 0.0
+weighted_f1_var_mean: 0.0006156071037910268
+weighted_f1_var_var: 0.0

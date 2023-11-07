@@ -1,0 +1,130 @@
+
+****************************************
+Model: Base-DT Penguins
+Confusion Matrix:
+[[38  2  0]
+ [ 4 11  0]
+ [ 0  1 28]]
+Classification Report:
+              precision    recall  f1-score   support
+
+      Adelie       0.90      0.95      0.93        40
+   Chinstrap       0.79      0.73      0.76        15
+      Gentoo       1.00      0.97      0.98        29
+
+    accuracy                           0.92        84
+   macro avg       0.90      0.88      0.89        84
+weighted avg       0.92      0.92      0.92        84
+
+Accuracy: 0.9167
+Macro-average F1: 0.8893
+Weighted-average F1: 0.9160
+****************************************
+
+****************************************
+Model: Top-DT Penguins
+Confusion Matrix:
+[[39  1  0]
+ [ 1 14  0]
+ [ 1  0 28]]
+Classification Report:
+              precision    recall  f1-score   support
+
+      Adelie       0.95      0.97      0.96        40
+   Chinstrap       0.93      0.93      0.93        15
+      Gentoo       1.00      0.97      0.98        29
+
+    accuracy                           0.96        84
+   macro avg       0.96      0.96      0.96        84
+weighted avg       0.96      0.96      0.96        84
+
+Accuracy: 0.9643
+Macro-average F1: 0.9596
+Weighted-average F1: 0.9644
+****************************************
+
+****************************************
+Model: Base-MLP Penguins
+Confusion Matrix:
+[[40  0  0]
+ [15  0  0]
+ [29  0  0]]
+Classification Report:
+              precision    recall  f1-score   support
+
+      Adelie       0.48      1.00      0.65        40
+   Chinstrap       0.00      0.00      0.00        15
+      Gentoo       0.00      0.00      0.00        29
+
+    accuracy                           0.48        84
+   macro avg       0.16      0.33      0.22        84
+weighted avg       0.23      0.48      0.31        84
+
+Accuracy: 0.4762
+Macro-average F1: 0.2151
+Weighted-average F1: 0.3072
+****************************************
+
+****************************************
+Model: Top-MLP Penguins
+Confusion Matrix:
+[[34  0  6]
+ [15  0  0]
+ [ 0  0 29]]
+Classification Report:
+              precision    recall  f1-score   support
+
+      Adelie       0.69      0.85      0.76        40
+   Chinstrap       0.00      0.00      0.00        15
+      Gentoo       0.83      1.00      0.91        29
+
+    accuracy                           0.75        84
+   macro avg       0.51      0.62      0.56        84
+weighted avg       0.62      0.75      0.68        84
+
+Accuracy: 0.7500
+Macro-average F1: 0.5568
+Weighted-average F1: 0.6767
+****************************************
+
+--- Top-DT ---
+accuracy_mean_mean: 0.9571428571428571
+accuracy_mean_var: 0.0
+accuracy_var_mean: 3.4013605442177256e-05
+accuracy_var_var: 0.0
+macro_f1_mean_mean: 0.9498791335564091
+macro_f1_mean_var: 0.0
+macro_f1_var_mean: 6.279150518496926e-05
+macro_f1_var_var: 0.0
+weighted_f1_mean_mean: 0.9571055867560376
+weighted_f1_mean_var: 0.0
+weighted_f1_var_mean: 3.5489284420824774e-05
+weighted_f1_var_var: 0.0
+
+--- Base-MLP ---
+accuracy_mean_mean: 0.4261904761904762
+accuracy_mean_var: 0.0
+accuracy_var_mean: 0.010056689342403627
+accuracy_var_var: 0.0
+macro_f1_mean_mean: 0.28649176894237605
+macro_f1_mean_var: 0.0
+macro_f1_var_mean: 0.022937505805165535
+macro_f1_var_var: 0.0
+weighted_f1_mean_mean: 0.30092146363816386
+weighted_f1_mean_var: 0.0
+weighted_f1_var_mean: 0.023515038384039604
+weighted_f1_var_var: 0.0
+
+--- Top-MLP ---
+accuracy_mean_mean: 0.47619047619047616
+accuracy_mean_var: 0.0
+accuracy_var_mean: 0.0
+accuracy_var_var: 0.0
+macro_f1_mean_mean: 0.2150537634408602
+macro_f1_mean_var: 0.0
+macro_f1_var_mean: 7.703719777548943e-34
+macro_f1_var_var: 0.0
+weighted_f1_mean_mean: 0.3072196620583717
+weighted_f1_mean_var: 0.0
+weighted_f1_var_mean: 0.0
+weighted_f1_var_var: 0.0
