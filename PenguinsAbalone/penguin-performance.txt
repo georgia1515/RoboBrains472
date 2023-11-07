@@ -2,45 +2,53 @@
 ****************************************
 Model: Top-MLP Penguins
 Confusion Matrix:
-[[31  0  0]
- [14  0  0]
- [39  0  0]]
+[[38  0  0]
+ [16  0  0]
+ [30  0  0]]
 Classification Report:
               precision    recall  f1-score   support
 
-      Adelie       0.37      1.00      0.54        31
-   Chinstrap       0.00      0.00      0.00        14
-      Gentoo       0.00      0.00      0.00        39
+      Adelie       0.45      1.00      0.62        38
+   Chinstrap       0.00      0.00      0.00        16
+      Gentoo       0.00      0.00      0.00        30
 
-    accuracy                           0.37        84
-   macro avg       0.12      0.33      0.18        84
-weighted avg       0.14      0.37      0.20        84
+    accuracy                           0.45        84
+   macro avg       0.15      0.33      0.21        84
+weighted avg       0.20      0.45      0.28        84
 
-Accuracy: 0.3690
-Macro-average F1: 0.1797
-Weighted-average F1: 0.1990
+Accuracy: 0.4524
+Macro-average F1: 0.2077
+Weighted-average F1: 0.2818
 ****************************************
 
+--- Base-DT ---
+accuracy_mean: 0.9643
+accuracy_var: 0.0002
+macro_f1_mean: 0.9602
+macro_f1_var: 0.0004
+weighted_f1_mean: 0.9640
+weighted_f1_var: 0.0002
+
 --- Top-DT ---
-accuracy_mean: 0.9714
-accuracy_var: 0.0000
-macro_f1_mean: 0.9688
-macro_f1_var: 0.0000
-weighted_f1_mean: 0.9713
-weighted_f1_var: 0.0000
+accuracy_mean: 0.9571
+accuracy_var: 0.0003
+macro_f1_mean: 0.9508
+macro_f1_var: 0.0004
+weighted_f1_mean: 0.9567
+weighted_f1_var: 0.0003
 
 --- Base-MLP ---
-accuracy_mean: 0.3690
+accuracy_mean: 0.4524
 accuracy_var: 0.0000
-macro_f1_mean: 0.1797
+macro_f1_mean: 0.2077
 macro_f1_var: 0.0000
-weighted_f1_mean: 0.1990
+weighted_f1_mean: 0.2818
 weighted_f1_var: 0.0000
 
 --- Top-MLP ---
-accuracy_mean: 0.5238
-accuracy_var: 0.0359
-macro_f1_mean: 0.3272
-macro_f1_var: 0.0327
-weighted_f1_mean: 0.3973
-weighted_f1_var: 0.0590
+accuracy_mean: 0.5786
+accuracy_var: 0.0239
+macro_f1_mean: 0.3547
+macro_f1_var: 0.0325
+weighted_f1_mean: 0.4455
+weighted_f1_var: 0.0402
