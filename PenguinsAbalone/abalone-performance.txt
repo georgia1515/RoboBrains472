@@ -1,0 +1,32 @@
+
+--- Base-DT ---
+accuracy_mean: 0.536842105
+accuracy_var: 0.000000000
+macro_f1_mean: 0.530145957
+macro_f1_var: 0.000000000
+weighted_f1_mean: 0.523906559
+weighted_f1_var: 0.000000000
+
+--- Top-DT ---
+accuracy_mean: 0.553110048
+accuracy_var: 0.000000000
+macro_f1_mean: 0.519327793
+macro_f1_var: 0.000000000
+weighted_f1_mean: 0.529499873
+weighted_f1_var: 0.000000000
+
+--- Base-MLP ---
+accuracy_mean: 0.540478469
+accuracy_var: 0.000032380
+macro_f1_mean: 0.430291808
+macro_f1_var: 0.000028574
+weighted_f1_mean: 0.453918098
+weighted_f1_var: 0.000029711
+
+--- Top-MLP ---
+accuracy_mean: 0.551004785
+accuracy_var: 0.000004176
+macro_f1_mean: 0.526229396
+macro_f1_var: 0.000242887
+weighted_f1_mean: 0.532024154
+weighted_f1_var: 0.000111578

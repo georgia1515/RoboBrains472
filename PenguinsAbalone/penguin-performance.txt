@@ -5,112 +5,213 @@ Model: Base-DT Penguins
 
 (B)
 Confusion Matrix:
-[[34  1  0]
- [ 0 18  0]
- [ 0  0 31]]
+[[35  3  0]
+ [ 1 14  2]
+ [ 0  0 29]]
 
 (C)
 Classification Report:
               precision    recall  f1-score   support
 
-      Adelie       1.00      0.97      0.99        35
-   Chinstrap       0.95      1.00      0.97        18
-      Gentoo       1.00      1.00      1.00        31
+      Adelie       0.97      0.92      0.95        38
+   Chinstrap       0.82      0.82      0.82        17
+      Gentoo       0.94      1.00      0.97        29
 
-    accuracy                           0.99        84
-   macro avg       0.98      0.99      0.99        84
-weighted avg       0.99      0.99      0.99        84
+    accuracy                           0.93        84
+   macro avg       0.91      0.91      0.91        84
+weighted avg       0.93      0.93      0.93        84
 
 
 (D)
-Accuracy: 0.9881
-Macro-average F1: 0.9862
-Weighted-average F1: 0.9882
+Accuracy: 0.928571429
+Macro-average F1: 0.912047341
+Weighted-average F1: 0.928324753
 ________________________________________________________________________________
 
 ________________________________________________________________________________
 (A)
 Model: Top-DT Penguins
+Hyperparameters modified: {'criterion': ['gini', 'entropy'], 'max_depth': [4, 6, None], 'min_samples_split': [2, 4, 6]}
+Best hyperparameters: {'criterion': entropy, 'max_depth': 4, 'min_samples_split': 4}
 
 (B)
 Confusion Matrix:
-[[33  2  0]
- [ 1 17  0]
- [ 0  0 31]]
+[[36  2  0]
+ [ 2 15  0]
+ [ 0  0 29]]
 
 (C)
 Classification Report:
               precision    recall  f1-score   support
 
-      Adelie       0.97      0.94      0.96        35
-   Chinstrap       0.89      0.94      0.92        18
-      Gentoo       1.00      1.00      1.00        31
+      Adelie       0.95      0.95      0.95        38
+   Chinstrap       0.88      0.88      0.88        17
+      Gentoo       1.00      1.00      1.00        29
 
-    accuracy                           0.96        84
-   macro avg       0.96      0.96      0.96        84
-weighted avg       0.97      0.96      0.96        84
+    accuracy                           0.95        84
+   macro avg       0.94      0.94      0.94        84
+weighted avg       0.95      0.95      0.95        84
 
 
 (D)
-Accuracy: 0.9643
-Macro-average F1: 0.9585
-Weighted-average F1: 0.9645
+Accuracy: 0.952380952
+Macro-average F1: 0.943240454
+Weighted-average F1: 0.952380952
 ________________________________________________________________________________
 
 ________________________________________________________________________________
 (A)
 Model: Base-MLP Penguins
+Hyperparameters modified: {'hidden_layer_sizes': (100, 100), 'activation': logistic, 'solver': sgd}
 
 (B)
 Confusion Matrix:
-[[35  0  0]
- [18  0  0]
- [31  0  0]]
+[[38  0  0]
+ [17  0  0]
+ [29  0  0]]
 
 (C)
 Classification Report:
               precision    recall  f1-score   support
 
-      Adelie       0.42      1.00      0.59        35
-   Chinstrap       0.00      0.00      0.00        18
-      Gentoo       0.00      0.00      0.00        31
+      Adelie       0.45      1.00      0.62        38
+   Chinstrap       0.00      0.00      0.00        17
+      Gentoo       0.00      0.00      0.00        29
 
-    accuracy                           0.42        84
-   macro avg       0.14      0.33      0.20        84
-weighted avg       0.17      0.42      0.25        84
+    accuracy                           0.45        84
+   macro avg       0.15      0.33      0.21        84
+weighted avg       0.20      0.45      0.28        84
 
 
 (D)
-Accuracy: 0.4167
-Macro-average F1: 0.1961
-Weighted-average F1: 0.2451
+Accuracy: 0.452380952
+Macro-average F1: 0.207650273
+Weighted-average F1: 0.281811085
 ________________________________________________________________________________
 
 ________________________________________________________________________________
 (A)
 Model: Top-MLP Penguins
+Hyperparameters modified: {'activation': ['logistic', 'tanh', 'relu'], 'hidden_layer_sizes': [(30, 50), (10, 10, 10)], 'solver': ['adam', 'sgd']}
+Best hyperparameters: {'activation': tanh, 'hidden_layer_sizes': (30, 50), 'solver': adam}
 
 (B)
 Confusion Matrix:
-[[30  0  5]
- [18  0  0]
- [ 0  0 31]]
+[[38  0  0]
+ [17  0  0]
+ [29  0  0]]
 
 (C)
 Classification Report:
               precision    recall  f1-score   support
 
-      Adelie       0.62      0.86      0.72        35
-   Chinstrap       0.00      0.00      0.00        18
-      Gentoo       0.86      1.00      0.93        31
+      Adelie       0.45      1.00      0.62        38
+   Chinstrap       0.00      0.00      0.00        17
+      Gentoo       0.00      0.00      0.00        29
 
-    accuracy                           0.73        84
-   macro avg       0.50      0.62      0.55        84
-weighted avg       0.58      0.73      0.64        84
+    accuracy                           0.45        84
+   macro avg       0.15      0.33      0.21        84
+weighted avg       0.20      0.45      0.28        84
 
 
 (D)
-Accuracy: 0.7262
-Macro-average F1: 0.5494
-Weighted-average F1: 0.6427
+Accuracy: 0.452380952
+Macro-average F1: 0.207650273
+Weighted-average F1: 0.281811085
 ________________________________________________________________________________
+
+--- Base-DT ---
+accuracy_mean: 0.966666667
+accuracy_var: 0.000079365
+macro_f1_mean: 0.960534277
+macro_f1_var: 0.000111354
+weighted_f1_mean: 0.966775510
+weighted_f1_var: 0.000078865
+
+--- Top-DT ---
+accuracy_mean: 0.945238095
+accuracy_var: 0.000034014
+macro_f1_mean: 0.935391420
+macro_f1_var: 0.000041072
+weighted_f1_mean: 0.945510204
+weighted_f1_var: 0.000031471
+
+--- Base-MLP ---
+accuracy_mean: 0.452380952
+accuracy_var: 0.000000000
+macro_f1_mean: 0.207650273
+macro_f1_var: 0.000000000
+weighted_f1_mean: 0.281811085
+weighted_f1_var: 0.000000000
+
+--- Top-MLP ---
+accuracy_mean: 0.530952381
+accuracy_var: 0.013356009
+macro_f1_mean: 0.317937407
+macro_f1_var: 0.020683454
+weighted_f1_mean: 0.397967619
+weighted_f1_var: 0.023812453
+
+--- Base-DT ---
+accuracy_mean: 0.950000000
+accuracy_var: 0.000306122
+macro_f1_mean: 0.938345881
+macro_f1_var: 0.000491574
+weighted_f1_mean: 0.949579995
+weighted_f1_var: 0.000312446
+
+--- Top-DT ---
+accuracy_mean: 0.964285714
+accuracy_var: 0.000113379
+macro_f1_mean: 0.957563320
+macro_f1_var: 0.000161153
+weighted_f1_mean: 0.964340136
+weighted_f1_var: 0.000113391
+
+--- Base-MLP ---
+accuracy_mean: 0.452380952
+accuracy_var: 0.000000000
+macro_f1_mean: 0.207650273
+macro_f1_var: 0.000000000
+weighted_f1_mean: 0.281811085
+weighted_f1_var: 0.000000000
+
+--- Top-MLP ---
+accuracy_mean: 0.452380952
+accuracy_var: 0.000000000
+macro_f1_mean: 0.207650273
+macro_f1_var: 0.000000000
+weighted_f1_mean: 0.281811085
+weighted_f1_var: 0.000000000
+
+--- Base-DT ---
+accuracy_mean: 0.957142857
+accuracy_var: 0.000260771
+macro_f1_mean: 0.948960598
+macro_f1_var: 0.000411811
+weighted_f1_mean: 0.957338216
+weighted_f1_var: 0.000263947
+
+--- Top-DT ---
+accuracy_mean: 0.945238095
+accuracy_var: 0.000090703
+macro_f1_mean: 0.935746032
+macro_f1_var: 0.000124872
+weighted_f1_mean: 0.945655329
+weighted_f1_var: 0.000089326
+
+--- Base-MLP ---
+accuracy_mean: 0.452380952
+accuracy_var: 0.000000000
+macro_f1_mean: 0.207650273
+macro_f1_var: 0.000000000
+weighted_f1_mean: 0.281811085
+weighted_f1_var: 0.000000000
+
+--- Top-MLP ---
+accuracy_mean: 0.471428571
+accuracy_var: 0.001451247
+macro_f1_mean: 0.247406768
+macro_f1_var: 0.006322316
+weighted_f1_mean: 0.321480614
+weighted_f1_var: 0.006294686
