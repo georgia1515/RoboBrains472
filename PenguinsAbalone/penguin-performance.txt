@@ -5,58 +5,46 @@ Model: Base-DT Penguins
 
 (B)
 Confusion Matrix:
-[[35  3  0]
- [ 1 14  2]
- [ 0  0 29]]
+[[32  1  0]
+ [ 0 17  0]
+ [ 0  3 31]]
 
 (C)
-Classification Report:
-              precision    recall  f1-score   support
-
-      Adelie       0.97      0.92      0.95        38
-   Chinstrap       0.82      0.82      0.82        17
-      Gentoo       0.94      1.00      0.97        29
-
-    accuracy                           0.93        84
-   macro avg       0.91      0.91      0.91        84
-weighted avg       0.93      0.93      0.93        84
-
+Report for Precision, Recall, and F1-measure:
+           precision    recall  f1-score
+Adelie      1.000000  0.969697  0.984615
+Chinstrap   0.809524  1.000000  0.894737
+Gentoo      1.000000  0.911765  0.953846
 
 (D)
-Accuracy: 0.928571429
-Macro-average F1: 0.912047341
-Weighted-average F1: 0.928324753
+Accuracy: 0.952380952
+Macro-average F1: 0.944399460
+Weighted-average F1: 0.953971467
 ________________________________________________________________________________
 
 ________________________________________________________________________________
 (A)
 Model: Top-DT Penguins
 Hyperparameters modified: {'criterion': ['gini', 'entropy'], 'max_depth': [4, 6, None], 'min_samples_split': [2, 4, 6]}
-Best hyperparameters: {'criterion': entropy, 'max_depth': 4, 'min_samples_split': 4}
+Best hyperparameters: {'criterion': gini, 'max_depth': 4, 'min_samples_split': 2}
 
 (B)
 Confusion Matrix:
-[[36  2  0]
- [ 2 15  0]
- [ 0  0 29]]
+[[32  1  0]
+ [ 0 17  0]
+ [ 0  3 31]]
 
 (C)
-Classification Report:
-              precision    recall  f1-score   support
-
-      Adelie       0.95      0.95      0.95        38
-   Chinstrap       0.88      0.88      0.88        17
-      Gentoo       1.00      1.00      1.00        29
-
-    accuracy                           0.95        84
-   macro avg       0.94      0.94      0.94        84
-weighted avg       0.95      0.95      0.95        84
-
+Report for Precision, Recall, and F1-measure:
+           precision    recall  f1-score
+Adelie      1.000000  0.969697  0.984615
+Chinstrap   0.809524  1.000000  0.894737
+Gentoo      1.000000  0.911765  0.953846
 
 (D)
 Accuracy: 0.952380952
-Macro-average F1: 0.943240454
-Weighted-average F1: 0.952380952
+Macro-average F1: 0.944399460
+Weighted-average F1: 0.953971467
 ________________________________________________________________________________
 
 ________________________________________________________________________________
@@ -66,152 +54,76 @@ Hyperparameters modified: {'hidden_layer_sizes': (100, 100), 'activation': logis
 
 (B)
 Confusion Matrix:
-[[38  0  0]
+[[33  0  0]
  [17  0  0]
- [29  0  0]]
+ [34  0  0]]
 
 (C)
-Classification Report:
-              precision    recall  f1-score   support
-
-      Adelie       0.45      1.00      0.62        38
-   Chinstrap       0.00      0.00      0.00        17
-      Gentoo       0.00      0.00      0.00        29
-
-    accuracy                           0.45        84
-   macro avg       0.15      0.33      0.21        84
-weighted avg       0.20      0.45      0.28        84
-
+Report for Precision, Recall, and F1-measure:
+           precision  recall  f1-score
+Adelie      0.392857     1.0  0.564103
+Chinstrap   0.000000     0.0  0.000000
+Gentoo      0.000000     0.0  0.000000
 
 (D)
-Accuracy: 0.452380952
-Macro-average F1: 0.207650273
-Weighted-average F1: 0.281811085
+Accuracy: 0.392857143
+Macro-average F1: 0.188034188
+Weighted-average F1: 0.221611722
 ________________________________________________________________________________
 
 ________________________________________________________________________________
 (A)
 Model: Top-MLP Penguins
 Hyperparameters modified: {'activation': ['logistic', 'tanh', 'relu'], 'hidden_layer_sizes': [(30, 50), (10, 10, 10)], 'solver': ['adam', 'sgd']}
-Best hyperparameters: {'activation': tanh, 'hidden_layer_sizes': (30, 50), 'solver': adam}
+Best hyperparameters: {'activation': logistic, 'hidden_layer_sizes': (30, 50), 'solver': adam}
 
 (B)
 Confusion Matrix:
-[[38  0  0]
+[[28  0  5]
  [17  0  0]
- [29  0  0]]
+ [ 6  0 28]]
 
 (C)
-Classification Report:
-              precision    recall  f1-score   support
-
-      Adelie       0.45      1.00      0.62        38
-   Chinstrap       0.00      0.00      0.00        17
-      Gentoo       0.00      0.00      0.00        29
-
-    accuracy                           0.45        84
-   macro avg       0.15      0.33      0.21        84
-weighted avg       0.20      0.45      0.28        84
-
+Report for Precision, Recall, and F1-measure:
+           precision    recall  f1-score
+Adelie      0.549020  0.848485  0.666667
+Chinstrap   0.000000  0.000000  0.000000
+Gentoo      0.848485  0.823529  0.835821
 
 (D)
-Accuracy: 0.452380952
-Macro-average F1: 0.207650273
-Weighted-average F1: 0.281811085
+Accuracy: 0.666666667
+Macro-average F1: 0.500829187
+Weighted-average F1: 0.600213220
 ________________________________________________________________________________
 
 --- Base-DT ---
-accuracy_mean: 0.966666667
-accuracy_var: 0.000079365
-macro_f1_mean: 0.960534277
-macro_f1_var: 0.000111354
-weighted_f1_mean: 0.966775510
-weighted_f1_var: 0.000078865
+accuracy_mean: 0.952380952
+accuracy_var: 0.000000000
+macro_f1_mean: 0.944399460
+macro_f1_var: 0.000000000
+weighted_f1_mean: 0.953971467
+weighted_f1_var: 0.000000000
 
 --- Top-DT ---
-accuracy_mean: 0.945238095
-accuracy_var: 0.000034014
-macro_f1_mean: 0.935391420
-macro_f1_var: 0.000041072
-weighted_f1_mean: 0.945510204
-weighted_f1_var: 0.000031471
+accuracy_mean: 0.952380952
+accuracy_var: 0.000000000
+macro_f1_mean: 0.944399460
+macro_f1_var: 0.000000000
+weighted_f1_mean: 0.953971467
+weighted_f1_var: 0.000000000
 
 --- Base-MLP ---
-accuracy_mean: 0.452380952
+accuracy_mean: 0.392857143
 accuracy_var: 0.000000000
-macro_f1_mean: 0.207650273
+macro_f1_mean: 0.188034188
 macro_f1_var: 0.000000000
-weighted_f1_mean: 0.281811085
+weighted_f1_mean: 0.221611722
 weighted_f1_var: 0.000000000
 
 --- Top-MLP ---
-accuracy_mean: 0.530952381
-accuracy_var: 0.013356009
-macro_f1_mean: 0.317937407
-macro_f1_var: 0.020683454
-weighted_f1_mean: 0.397967619
-weighted_f1_var: 0.023812453
-
---- Base-DT ---
-accuracy_mean: 0.950000000
-accuracy_var: 0.000306122
-macro_f1_mean: 0.938345881
-macro_f1_var: 0.000491574
-weighted_f1_mean: 0.949579995
-weighted_f1_var: 0.000312446
-
---- Top-DT ---
-accuracy_mean: 0.964285714
-accuracy_var: 0.000113379
-macro_f1_mean: 0.957563320
-macro_f1_var: 0.000161153
-weighted_f1_mean: 0.964340136
-weighted_f1_var: 0.000113391
-
---- Base-MLP ---
-accuracy_mean: 0.452380952
-accuracy_var: 0.000000000
-macro_f1_mean: 0.207650273
-macro_f1_var: 0.000000000
-weighted_f1_mean: 0.281811085
-weighted_f1_var: 0.000000000
-
---- Top-MLP ---
-accuracy_mean: 0.452380952
-accuracy_var: 0.000000000
-macro_f1_mean: 0.207650273
-macro_f1_var: 0.000000000
-weighted_f1_mean: 0.281811085
-weighted_f1_var: 0.000000000
-
---- Base-DT ---
-accuracy_mean: 0.957142857
-accuracy_var: 0.000260771
-macro_f1_mean: 0.948960598
-macro_f1_var: 0.000411811
-weighted_f1_mean: 0.957338216
-weighted_f1_var: 0.000263947
-
---- Top-DT ---
-accuracy_mean: 0.945238095
-accuracy_var: 0.000090703
-macro_f1_mean: 0.935746032
-macro_f1_var: 0.000124872
-weighted_f1_mean: 0.945655329
-weighted_f1_var: 0.000089326
-
---- Base-MLP ---
-accuracy_mean: 0.452380952
-accuracy_var: 0.000000000
-macro_f1_mean: 0.207650273
-macro_f1_var: 0.000000000
-weighted_f1_mean: 0.281811085
-weighted_f1_var: 0.000000000
-
---- Top-MLP ---
-accuracy_mean: 0.471428571
-accuracy_var: 0.001451247
-macro_f1_mean: 0.247406768
-macro_f1_var: 0.006322316
-weighted_f1_mean: 0.321480614
-weighted_f1_var: 0.006294686
+accuracy_mean: 0.500000000
+accuracy_var: 0.017233560
+macro_f1_mean: 0.310094554
+macro_f1_var: 0.022348388
+weighted_f1_mean: 0.369421645
+weighted_f1_var: 0.032772184

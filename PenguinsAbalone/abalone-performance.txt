@@ -1,32 +1,130 @@
 
+________________________________________________________________________________
+(A)
+Model: Base-DT Abalone
+Hyperparameters: {'max_depth': 4}
+
+(B)
+Confusion Matrix:
+[[218  69  47]
+ [ 55 244  31]
+ [220  89  72]]
+
+(C)
+Report for Precision, Recall, and F1-measure:
+   precision    recall  f1-score
+F   0.442191  0.652695  0.527207
+I   0.606965  0.739394  0.666667
+M   0.480000  0.188976  0.271186
+
+(D)
+Accuracy: 0.511004785
+Macro-average F1: 0.488353293
+Weighted-average F1: 0.477903441
+________________________________________________________________________________
+
+________________________________________________________________________________
+(A)
+Model: Top-DT Abalone
+Hyperparameters modified: {'criterion': ['gini', 'entropy'], 'max_depth': [4, 6, None], 'min_samples_split': [2, 4, 6]}
+Best hyperparameters: {'criterion': entropy, 'max_depth': 4, 'min_samples_split': 2}
+
+(B)
+Confusion Matrix:
+[[153  42 139]
+ [ 39 227  64]
+ [154  49 178]]
+
+(C)
+Report for Precision, Recall, and F1-measure:
+   precision    recall  f1-score
+F   0.442197  0.458084  0.450000
+I   0.713836  0.687879  0.700617
+M   0.467192  0.467192  0.467192
+
+(D)
+Accuracy: 0.533971292
+Macro-average F1: 0.539269628
+Weighted-average F1: 0.535410243
+________________________________________________________________________________
+
+________________________________________________________________________________
+(A)
+Model: Base-MLP Abalone
+Hyperparameters modified: {'hidden_layer_sizes': (100, 100), 'activation': logistic, 'solver': sgd}
+
+(B)
+Confusion Matrix:
+[[  0  53 281]
+ [  0 227 103]
+ [  0  71 310]]
+
+(C)
+Report for Precision, Recall, and F1-measure:
+   precision    recall  f1-score
+F   0.000000  0.000000  0.000000
+I   0.646724  0.687879  0.666667
+M   0.446686  0.813648  0.576744
+
+(D)
+Accuracy: 0.513875598
+Macro-average F1: 0.414470284
+Weighted-average F1: 0.420803383
+________________________________________________________________________________
+
+________________________________________________________________________________
+(A)
+Model: Top-MLP Abalone
+Hyperparameters modified: {'activation': ['logistic', 'tanh', 'relu'], 'hidden_layer_sizes': [(30, 50), (10, 10, 10)], 'solver': ['adam', 'sgd']}
+Best hyperparameters: {'activation': tanh, 'hidden_layer_sizes': (10, 10, 10), 'solver': adam}
+
+(B)
+Confusion Matrix:
+[[ 71  44 219]
+ [  4 261  65]
+ [ 69  60 252]]
+
+(C)
+Report for Precision, Recall, and F1-measure:
+   precision    recall  f1-score
+F   0.493056  0.212575  0.297071
+I   0.715068  0.790909  0.751079
+M   0.470149  0.661417  0.549618
+
+(D)
+Accuracy: 0.558851675
+Macro-average F1: 0.532589529
+Weighted-average F1: 0.532519093
+________________________________________________________________________________
+
 --- Base-DT ---
-accuracy_mean: 0.536842105
+accuracy_mean: 0.511004785
 accuracy_var: 0.000000000
-macro_f1_mean: 0.530145957
+macro_f1_mean: 0.488353293
 macro_f1_var: 0.000000000
-weighted_f1_mean: 0.523906559
+weighted_f1_mean: 0.477903441
 weighted_f1_var: 0.000000000
 
 --- Top-DT ---
-accuracy_mean: 0.553110048
+accuracy_mean: 0.533971292
 accuracy_var: 0.000000000
-macro_f1_mean: 0.519327793
+macro_f1_mean: 0.539269628
 macro_f1_var: 0.000000000
-weighted_f1_mean: 0.529499873
+weighted_f1_mean: 0.535410243
 weighted_f1_var: 0.000000000
 
 --- Base-MLP ---
-accuracy_mean: 0.540478469
-accuracy_var: 0.000032380
-macro_f1_mean: 0.430291808
-macro_f1_var: 0.000028574
-weighted_f1_mean: 0.453918098
-weighted_f1_var: 0.000029711
+accuracy_mean: 0.510047847
+accuracy_var: 0.000001465
+macro_f1_mean: 0.411526971
+macro_f1_var: 0.000000356
+weighted_f1_mean: 0.417904153
+weighted_f1_var: 0.000000409
 
 --- Top-MLP ---
-accuracy_mean: 0.551004785
-accuracy_var: 0.000004176
-macro_f1_mean: 0.526229396
-macro_f1_var: 0.000242887
-weighted_f1_mean: 0.532024154
-weighted_f1_var: 0.000111578
+accuracy_mean: 0.539712919
+accuracy_var: 0.000193036
+macro_f1_mean: 0.503608388
+macro_f1_var: 0.000130151
+weighted_f1_mean: 0.504272709
+weighted_f1_var: 0.000119086
