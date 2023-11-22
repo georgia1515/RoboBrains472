@@ -1,0 +1,2 @@
+model_name,size_of_vocab,number_of_correct,number_of_non_random_guess,accuracy
+word2vec-google-news-300,3000000,61,79,0.7721518987341772
