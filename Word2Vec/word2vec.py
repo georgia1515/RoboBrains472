@@ -4,23 +4,19 @@ import os
 import csv
 import matplotlib.pyplot as plt
 import nltk
-from nltk.tokenize import sent_tokenize, word_tokenize
+from nltk.tokenize import word_tokenize
 from gensim.models import Word2Vec
 
 # Task 1 - Evaluation of the word2vec-google-news-300 Pre-trained Model
-# load the pretrained embedding model
-wv = api.load('word2vec-google-news-300')
-
-# load the dataset
+# Load the dataset
 synonyms = pd.read_csv('synonym.csv')
 
-# compute cosine similarity between 2 embeddings (2 vectors)
 
 # Function to find the closest synonym to a given question word
-def find_closest_synonym_and_save(question_word, answer, *choices, result_csv_filename, name, total_correct, total_guess, total):
+def find_closest_synonym_and_save(question_word, answer, *choices, result_csv_filename, total_correct, total_guess, total, wv):
     try:
         total += 1
-        # Compute cosine similarity between the question word and each choice
+        # Compute cosine similarity between 2 embeddings (2 vectors): between the question word and each choice
         similarity_scores = [(choice, wv.similarity(question_word, choice)) for choice in choices]
 
         # Find the most similar choice using cosine similarity
@@ -47,14 +43,13 @@ def find_closest_synonym_and_save(question_word, answer, *choices, result_csv_fi
 
     if isinstance(result_csv_filename, str):
         result_csv_filename += '-details.csv'
-    elif name != None:
-        result_csv_filename = name + '-details.csv'
     
     # Check if the result_csv_filename already exists
     result_df.to_csv(result_csv_filename, mode='a', header=False, index=False)
     return total_correct, total_guess, total
 
-def write_Pre_trained_Analysis(model_name, total_correct, total_guess, total):
+# Function to write the analysis to a CSV file
+def write_Pre_trained_Analysis(model_name, total_correct, total_guess, total, wv):
     # Get the size of the vocabulary
     vocabulary_size = len(wv.index_to_key)
 
@@ -82,7 +77,7 @@ def write_Pre_trained_Analysis(model_name, total_correct, total_guess, total):
         })
     return accuracy
 
-def get_results_pre_trained_model(model_name):
+def get_results_pre_trained_model(model_name, wv):
     total_correct = 0
     total_guess = 0
     total = 0
@@ -91,13 +86,13 @@ def get_results_pre_trained_model(model_name):
         with open(model_name + '-details.csv', 'w'):
             pass
     for index, row in synonyms.iterrows():
-        total_correct, total_guess, total = find_closest_synonym_and_save(*row, result_csv_filename=model_name, name=None, total_correct=total_correct, total_guess=total_guess, total=total)
+        total_correct, total_guess, total = find_closest_synonym_and_save(*row, result_csv_filename=model_name, total_correct=total_correct, total_guess=total_guess, total=total, wv=wv)
 
     print('Total correct: ', total_correct)
     print('Total guess: ', total_guess)
     print('Total: ', total)
 
-    accuracy = write_Pre_trained_Analysis(model_name, total_correct, total_guess, total)
+    accuracy = write_Pre_trained_Analysis(model_name, total_correct, total_guess, total, wv)
     return accuracy
 
 analysis_filename = 'analysis.csv'
@@ -108,29 +103,31 @@ if os.path.isfile(analysis_filename):
 accuracies = []
 
 # Load dataset from another file (replace 'your_dataset_file.csv' with the actual file name)
+# Load the pretrained embedding model
+wv = api.load('word2vec-google-news-300')
 model_name = 'word2vec-google-news-300'
-accuracy = get_results_pre_trained_model(model_name)
+accuracy = get_results_pre_trained_model(model_name, wv)
 accuracies.append(accuracy)
 # Task 2 - Comparison with other pre-trained models
 
 # 2 new models from different corpora but same embedding size (200)
 wv = api.load('glove-wiki-gigaword-200')
 model_name = 'glove-wiki-gigaword-200'
-accuracy = get_results_pre_trained_model(model_name)
+accuracy = get_results_pre_trained_model(model_name, wv)
 accuracies.append(accuracy)
 
 wv = api.load('glove-twitter-200')
 model_name = 'glove-twitter-200'
-accuracy = get_results_pre_trained_model(model_name)
+accuracy = get_results_pre_trained_model(model_name, wv)
 accuracies.append(accuracy)
 # 2 new models from same corpora (glove-wiki-gigaword) but different embedding size
 wv = api.load('glove-wiki-gigaword-50')
 model_name = 'glove-wiki-gigaword-50'
-accuracy = get_results_pre_trained_model(model_name)
+accuracy = get_results_pre_trained_model(model_name, wv)
 accuracies.append(accuracy)
 wv = api.load('glove-wiki-gigaword-100')
 model_name = 'glove-wiki-gigaword-100'
-accuracy = get_results_pre_trained_model(model_name)
+accuracy = get_results_pre_trained_model(model_name, wv)
 accuracies.append(accuracy)
 
 model_names = ['word2vec-google-news-300', 'glove-wiki-gigaword-200', 'glove-twitter-200', 'glove-wiki-gigaword-50', 'glove-wiki-gigaword-100']
@@ -139,7 +136,7 @@ plt.bar(model_names, accuracies)
 plt.ylabel('Accuracy')
 plt.title('Word Embedding Model Comparison')
 plt.savefig('Accuracies.png')
-plt.show()
+# plt.show()
 
 # Task 3 - Train own models
 
@@ -155,16 +152,19 @@ def train_and_evaluate_model(window_size, embedding_size, tokenized_online_books
 
     # Example usage with your dataset
     result_csv_filename = f'output_results_W{window_size}_E{embedding_size}.csv'
-    result_csv = f'output_results_W{window_size}_E{embedding_size}.csv'
 
     wv = loaded_model.wv
     total_correct = 0
     total_guess = 0
     total = 0
 
+    if os.path.isfile(result_csv_filename + '-details.csv'):
+        with open(result_csv_filename + '-details.csv', 'w'):
+            pass
+
     for index, row in synonyms.iterrows():
-        total_correct, total_guess, total = find_closest_synonym_and_save_own_corpus(
-            *row, result_csv_filename=result_csv_filename, name=result_csv,
+        total_correct, total_guess, total = find_closest_synonym_and_save(
+            *row, result_csv_filename=result_csv_filename,
             total_correct=total_correct, total_guess=total_guess, total=total, wv=wv
         )
     print('Window size, embedding size: ', window_size, embedding_size)
@@ -172,48 +172,8 @@ def train_and_evaluate_model(window_size, embedding_size, tokenized_online_books
     print('Total guess: ', total_guess)
     print('Total: ', total)
 
-    accuracy = write_Pre_trained_Analysis(result_csv, total_correct, total_guess, total)
+    accuracy = write_Pre_trained_Analysis(result_csv_filename, total_correct, total_guess, total, wv)
     return accuracy
-
-
-def find_closest_synonym_and_save_own_corpus(question_word, answer, *choices, result_csv_filename, name, total_correct, total_guess, total, wv):
-    try:
-        total += 1
-        # Compute cosine similarity between the question word and each choice
-        similarity_scores = [(choice, wv.similarity(question_word, choice)) for choice in choices]
-
-        # Find the most similar choice using cosine similarity
-        most_similar_choice, _ = max(similarity_scores, key=lambda x: x[1])
-
-        # Determine if the guess is correct or wrong
-        result = 'correct' if most_similar_choice == answer else 'wrong'
-        if result == 'correct':
-            total_correct += 1
-
-    except KeyError:
-        most_similar_choice = None
-        result = 'guess'
-        total_guess += 1
-
-    # Save the result to a CSV file
-    result_data = {
-        'question_word': question_word,
-        'answer': answer,
-        'system_guess': most_similar_choice,
-        'result': result
-    }
-    result_df = pd.DataFrame([result_data])
-
-    if isinstance(result_csv_filename, str):
-        result_csv_filename += '-details.csv'
-    elif name is not None:
-        result_csv_filename = name + '-details.csv'
-
-    # Check if the result_csv_filename already exists
-    result_df.to_csv(result_csv_filename, mode='a', header=False, index=False)
-    return total_correct, total_guess, total
-
-# Assuming you have defined W1, W2, E5, E6, tokenized_online_books, and synonyms
 
 W1 = 2
 W2 = 5
